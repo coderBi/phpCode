@@ -1,0 +1,16 @@
+<?php
+//接受用户登录数据
+//id
+$id=$_POST['id'];
+//密码
+$password=$_POST['password'];
+
+//验证
+if ($id=="bww"&&password=='123'){
+    //合法，跳转到empManage.php
+    header("location:empManage.php");
+    exit();
+}else{
+    //非法用户
+    header("location:login.php");
+}

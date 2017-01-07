@@ -1,0 +1,103 @@
+http协议： 超文本传输协议
+	协议：约定，规范
+	http: 浏览器与服务器之间进行数据交换的时候的约定与规范
+请求格式：
+	三部分组成
+	1，请求行：GET(请求方法)  /index.php(URI,请求的资源标识符)  HTTP/1.1（协议/版本） \r\n(http中用回车换行表示换行)。位于第一行
+		请求方法：GET：查  POST：改  PUT：增   DELETE:删
+	2，请求头： 多个key:value对  最后一行是一个空行
+		Host: www.test.com 请求主机名
+		User-Agent: 请求代理名
+		Accept text/html,application/xhtml+xml,application/xml:q=0.9,*/*:q=0.8(q表示权重)
+		Accept-Language: zh-CN,en:q=0.7,ar-EG:q=0.3
+		Accept-Encoding(可接受的压缩编码格式):gzip,
+		Cookie: 写到服务器的cookie数据
+		Connection：连接类型，1.1中新增的重要特性。http是应用层，而建立的是tcp连接在网络层，如果Connection是keep-alive，可以让这个tcp连接晚一些（几秒钟）再断开。如果Connection是close就会在这次传输完成后立即关闭连接
+		Pragma: no-cache  控制不要缓存
+		Cache-Control： no-cache 控制不要缓存  两个控制缓存的是在不同版本里面出现的
+		referer：http://test.com/xx.php
+		......
+		\r\n （CRLF）
+	3，请求主体： 浏览器向服务器发送的数据，典型的情况是post请求
+		典型的编码规则就是urlencode： username=xx&key=xxx……
+
+返回来源页： 通过$_SEVER['HTTP_REFERER']可以得到请求头中的referer，如果没有就是空。这样可以实现像登录页面这样的请求执行完自己的操作之后在跳转会来源页
+
+多语言程序i18n（i18n: internationalization（国际化））：
+	针对不同的地区请求，可以返回不同的语言文件，可以通过Accept-Language来判断相应的语言，php中$_SERVER['HTTP-ACCEPT-LANGUAGE']得到可接受的语言。例如： $accept-lang = isset($_SERVER['HTTP-ACCEPT-LANGUAGE']) ? $_SERVER['HTTP-ACCEPT-LANGUAGE'] : 'zh_cn'; $lang_list = explode(',', $accept_lang); foreach($lang_list as $l){ $browser_list = str_replace('-','_',strtolower(explode($l)[0]))} 
+
+响应数据格式：
+	1，响应行：HTTP/1.1(协议/版本) 200(响应状态码)  ok（响应消息）
+	常见响应码：
+		200 ok: 请求成功
+		301 move permanently: 站点永久转移
+		302 Found：所请求的页面临时的转移到新的页面
+		304 Not Modified: 所请求的资源没有修改，浏览器会去拿缓存。一般浏览器有缓存文档的时候发送请求的时候，请求头中有 If-Modified-Since。实际开发中可能会出现由于缓存问题，静态资源例如图片、js之类的修改在浏览器端不能够及时看到，所以一般会自动构建（每次发布，动态修改静态资源的名称，例如用文件内容的md5值命名） 
+		404 Not Found: 资源不存在
+		403 Forbidden: 没有权限访问
+		500 internal server error: 服务器内部处理错误，如果服务器配置文件错误会返回这个错误
+		504 gateway timeout： 网关超时
+	2，响应头：
+		Date： 响应时间，GMT的表示方式
+		content-type：响应主体类型
+		content-length： 响应主体的长度
+		connection：连接方式，keep-alive意味着保持连接
+		keep-alive： timeout=5，max=100.如果设置了connection为keep-alive，超时为5s，最大为100s。
+		Server：apache/2.2(win32) php/5.3
+		X-powered-by: php/5.3.13
+		set-cookie: 命令（建议）浏览器设置的cookie数据
+		\r\n
+		
+	3，响应主体： 也即是浏览器接收到的源代码（需要解析到内容展示区）
+
+操作响应：
+	1，header('content-type:text/html;charset=utf-8'),
+	   header('set-cookie: gender=male') 
+	   header("location: localhost") 
+	   header('expires:'. gmdate('D, d M Y H:i:s', time()+5))(控制缓存时间5s，5s浏览器不会再发送请求) 
+	   header('expires:'. gmdate('D, d M Y H:i:s', time()-1))(控制不进行缓存)
+	   header('content-dispostion（主体-处理方式）:attachment（附加）;filename=xx.jpg')：主体的内容以附件的方式供浏览器展示
+	   header('content-type:'. new Finfo(FILEINFO_MIME_TYPE)->file($file))
+	   header("content-length: ". filesize($file))
+	   理论上header可以操作所有的头选项。 也可以操作响应行：header('http/1.1 404 not found')
+	2,任何的输出都是响应主体： echo var_dump print  print_r
+
+php发送GET请求：
+	define('CRLF', '\r\n')
+	//请求行
+	$request_data 'GET /index.php&c=xx HTTP/1.1'.CRLF;
+	//请求头
+	$request_data .= 'host: www.test.com'.CRLF;
+	$request_data .= 'user_agent: mozila/5.5……' （欺骗告知是火狐请求）
+	$request_data .= 'connection: close'.CRLF;
+	$request_data .= CRLF;
+	//建立tcp连接
+	$link = fsockopen('localhost','80');
+	if(! $link) die('服务器连接失败');
+	//发送请求,向连接通道写入数据
+	fwrite($link, $request_data);
+php发送POST请求：
+	define('CRLF', '\r\n')
+	//请求主体
+	$query_str = http_build_query(array('name' => 'xxx',));
+	//请求行
+	$request_data 'POST /index.php&c=xx HTTP/1.1'.CRLF;
+	//请求头
+	$request_data .= 'host: www.test.com'.CRLF;
+	$request_data .= 'user_agent: mozila/5.5……' （欺骗告知是火狐请求）
+	$request_data .= 'connection: close'.CRLF;
+	//post相关的请求头信息
+	$request_data .= 'content-type: application/x-www-form-urlencoded'.CRLF;
+	$request_data .= 'content-length: '.strlen($query_str).CRLF;
+	$request_data .= CRLF;
+
+	//建立tcp连接
+	$link = fsockopen('localhost','80');
+	if(! $link) die('服务器连接失败');
+	//发送请求,向连接通道写入数据
+	$request_data .= $query_str;
+	fwrite($link, $request_data);
+目录权限控制：
+	1，分布式控制：添加 .htaccess
+	2，在目录中间存放index.php
+	3，最好的方案：index.php public目录 之外的所有文件移出站点根目录

@@ -1,0 +1,62 @@
+thinkphp:
+	是一个基于mvc的面向对象的php轻量级开发框架。
+
+mvc：
+	m：model，负责数据的操作
+	v：view，负责前台页面显示
+	c: controller 描述系统功能
+
+thinkphp优势：
+	轻量级，中文支持好，所有注释的中文，由中国人开发。
+**note：thinkphp支持window跟linux但是需要php版本在5.2以上。
+
+ThinkPHP核心文件介绍
+	
+	├─ThinkPHP.php     框架入口文件
+	├─Common 框架公共文件
+	├─Conf 框架配置文件
+	├─Extend 框架扩展目录
+	├─Lang 核心语言包目录
+	├─Lib 核心类库目录
+	│  ├─Behavior 核心行为类库
+	│  ├─Core 核心基类库
+	│  ├─Driver 内置驱动
+	│  │  ├─Cache 内置缓存驱动
+	│  │  ├─Db 内置数据库驱动
+	│  │  ├─TagLib 内置标签驱动
+	│  │  └─Template 内置模板引擎驱动
+	│  └─Template 内置模板引擎
+	└─Tpl 系统模板目录
+
+创建一个简单的应用：
+  在thinkphp文件夹同目录下面创建index.php作为入口文件，其内容大致是：
+	//确定应用名称，前台应用一般取名为Home， 后台一般取名Admin
+	//第一次运行，会自动在index同级目录创建Home文件夹
+	define('APP_NAME', 'Home');
+	//确定应用路径, 当前index文件目录下面的Home文件夹
+	define('APP_PATH', './Home/'); //注意这个路径的写法后面一定要有那个 "/",否则会出问题
+	//引入核心文件
+	require './ThinkPHP_3.2.3/ThinkPHP.php'; //注意区分大小写，因为可能项目需要迁移到linux这样区分文件名大小写的系统
+
+路径解析：4种解析方式
+ ①：pathinfo：http://域名/项目名/入口文件/模块名/控制器名/方法名/参数名/参数值
+  --pathinfo下面传递参数一般形式是 参数名/值/另一个参数名/值
+  --可以修改入口文件后面的参数连接符，在common/conf/config.php中添加如下配置
+	'URL_PATHINFO_DEPR' => '-'   //更改pathinfo里面 参数名与值之间的分隔符。 默认是 "/"。 这样修改后需要书写为  /Projects/index.php/Home-Index-index-name-bww
+	
+ ②：普通模式：http://域名/项目名/入口文件?m=模块名&c=控制器名&a=方法名&参数名=参数值
+ ③：重写（rewrite）模式：不希望出现index.php
+	a)首先，需要在服务器里面配置文件httpd.conf中开启rewrite_module
+	b)然后，在index同级目录下面放置.htaccess文件，里面的重写规则如下（这是Apache的，其他的服务器可能不同）
+		<IfModule mod_rewrite.c>
+			#mod_rewrite 需要加上followsymlinks，否则会报错
+			Options +FollowSymlinks
+			RewriteEngine on
+			#RewriteCond，表示重写的条件。下面分别表示如果请求的文件名不是目录 如果不是文件。
+			RewriteCond %{REQUEST_FILENAME} !-d
+			RewriteCond %{REQUEST_FILENAME} !-f
+			# 符合上面两条重写判断就执行下面的重写规则。其中 [L] 表示这是最后一个匹配项，不在向下进行匹配。
+			RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+		</IfModule>
+ ④：兼容模式： 因为有些服务器可能不能完全兼容pathinfo模式。所以给出了这种兼容模式
+	/Projects/index.php?s=Home/Index/index/name/bww

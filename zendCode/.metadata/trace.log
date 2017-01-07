@@ -1,0 +1,30 @@
+# !SESSION 2016-02-06 00:59:10.343
+# version: 1.1
+# verbose: true
+# The following option strings are specified for this debug session:
+# 	null
+| main | 2016-02-06 00:59:10.343 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| main | 2016-02-06 00:59:10.347 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 7 ms |
+| main | 2016-02-06 00:59:10.352 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| main | 2016-02-06 00:59:10.353 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 1 ms |
+| main | 2016-02-06 00:59:10.360 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| main | 2016-02-06 00:59:10.361 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 1 ms |
+| main | 2016-02-06 00:59:10.647 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Completed WidgetModel.getWidgetForEdit it 79ms |
+| main | 2016-02-06 00:59:11.461 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Completed WidgetModel.getWidgetForEdit it 0ms |
+| Worker-7 | 2016-02-06 00:59:11.721 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| Worker-7 | 2016-02-06 00:59:11.725 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 4 ms |
+| Worker-8 | 2016-02-06 00:59:11.830 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Completed WidgetModel.getWidgetForRead it 10ms |
+| Worker-1 | 2016-02-06 00:59:12.294 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| Worker-1 | 2016-02-06 00:59:12.295 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 1 ms |
+| main | 2016-02-06 01:00:47.149 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| main | 2016-02-06 01:00:47.149 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 0 ms |
+| main | 2016-02-06 01:02:22.381 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Sync Execute command line: reg query "HKLM\Software\Wow6432Node\Microsoft\.NETFramework" /v "InstallRoot" |
+| main | 2016-02-06 01:02:22.480 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Creating TracingStreamListeners for reg query "HKLM\Software\Wow6432Node\Microsoft\.NETFramework" /v "InstallRoot" |
+| Output Stream Monitor | 2016-02-06 01:02:22.503 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | 错误:  |
+| Output Stream Monitor | 2016-02-06 01:02:22.503 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | 错误:  |
+| Output Stream Monitor | 2016-02-06 01:02:22.503 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | 系统找不到指定的注册表项或值。
+ |
+| Output Stream Monitor | 2016-02-06 01:02:22.513 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | 系统找不到指定的注册表项或值。
+ |
+| Worker-8 | 2016-02-06 01:05:47.185 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Really updating the installed plugin list |
+| Worker-8 | 2016-02-06 01:05:47.187 | org.eclipse.thym.core | /debug | org.eclipse.thym.core.HybridCore | trace | 175 | Updated plugin list in 2 ms |

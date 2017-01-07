@@ -1,0 +1,62 @@
+php数组： 
+	1：数组定义： 一系列数据的集合体，他们按设定的顺序排列起来
+		a）索引数组：$arr = array(1,2,"1001") 下标默认从0开始计数的整数
+		b）关联数组：$arr = array("2"=> 1, "1"=>2,(最后一个“，”可有可无)) 下标可以是字符串或者数字。下标可以人为指定值跟类型
+		---note： 如果下标是自动的，这一项的下标是前面数字下标的最大值 +1
+		---note:
+		如果下标用了小数，会默认的自取整数部分
+		---note:
+		如果两项数据的 key 相同，对应的value 会出现后面写入的覆盖前面的
+		---note：
+		key的值可以是负数
+		c）其他形式： 
+			--$arr[] = 3; $arr[] = 5; key： 0， 1
+			--$arr["aa"] = 2
+			--$arr[3] = 1; $arr[] = 2; key: 3,4
+	2,数组的分类： 
+		a）按key： 索引数组（全数字） 关联数组（全字符串） 混合数组（索引关联都存在）
+		b)按数组的复杂程度： 一维数组 二维数组 多维...
+		例如： $a = array(array(1,2),array(2,4));
+	3,数组操作：
+		a)foreach: 经历：指针默认初始化（第一项位置） -> 取值 —> 向后移—> 继续
+		b)$var = current($arr): 取得当前内部指针位置的value
+		c)$var = key（$arr）: 取得当前内部指针位置的key
+		d)$var = next($arr): 将内部指针向下移一个单位，然后取得其value
+		e)$var = pre($arr): 将内部指针向前移一个单位，然后取得其value
+		f)$var = reset（$arr）: 移动到第一个，然后取得其value
+		g)$var = end($arr): 移动到最后一个，然后取得其value
+		---note: 如果内部指针移动到外部了，得到的key是null value 是 bool(false)
+		h）可以通过下面语句代替foreach：
+			for($i = 0; $i < $len；++$i) {next($arr)}
+		----foreach在html中间可以用其标签式语法：foreach():  endForeach;例如 <?php foreach($arr as $value):?> <p><?php echo $value;?></p><?php endforeach;?>
+		----------while也有上面类似写法------------- 
+	4，each() 函数使用: 先取得一个数组的当前单元的下标与值并且放入一个数组，然后将指针进行下移
+		a) $a = each($arr): 得到的a 也是一个数组。 a数组里面用脚标 0 跟 "key" 存arr里面得到的key； 用脚标 1 跟 "value" 存arr里面得到的value。
+		----存储时是双份
+	5，list()函数使用： list（$var）被用作左值，不是常见的函数
+		a）list($a,$b) = $arr : 将arr下标为 0 跟 1 的value分别赋给 a 跟 b。 list函数用于取得一个数组从 0开始的数字下标的值。list返回指定的数组
+		---note： 如果某个下标不存在，就会进行报错（error）
+	6，用while（list（）= each（$arr））{} 可以代替foreach。但是效率没有foreach的高 
+	7,foreach细节：
+		a）默认传值是值传递，不过可以将value项人为的设置为引用传递。例如 foreach($arr as $key => & $value) { 修改value值}。 
+		-----note： key不能进行引用传递
+		b)如果在遍历过程中 使用了 arr[index] 进行修改或者添加数据，这个添加的效果在遍历里面是看不到的，只有结束了遍历才可以看到相应的修改。
+		-----内部解释： foreach之前会对数组进行一个复制，其实foreach里面真正操作的是这个复制的数组。当foreach结束之后，会将这个复制数组再拷贝回去。
+		-----note： 如果value是引用传递，中间利用arr[index]进行修改，对内部复制数组是可见的。
+	8,数组函数：
+		a）指针操作：current，key， next prev reset end each list
+		b）单元操作： array_pop array_push array_shift array_unshift array_slice array_splice
+		c)排序函数： sort asort ksort usort rsort  arsort krsort shuffle (其中的u表示user r表示decrease)
+		d)查找函数： in_array array_key_exists array_search
+		f)其他： count array_reverse array_merge array_sum array_keys array_values array_map
+		g）implode（',',$arr）:数组内容用','拼接成字符串。explode(',',$str): 从字符串获得一个数组。
+	9，二分查找：
+		a）前提： 必须是已经排序的索引数组 
+		b)算法：
+			--取中间项脚标: floor($begin + $end);
+			--判断中间项value是否等于所找，判断接下来是在左边找还是右边找还是直接返回 
+
+//*************************************//
+1，双引号里面如果书写了像 $var['xxx']这样的复杂的php表达式，需要用 {} 将表达式括起来，否则可能无法解析
+2，php里面可以通过sprintf进行字符串连接：$str = sprintf("%s%s%s", 'xx',$var,$arr['xx']);
+//*************************************//

@@ -1,0 +1,218 @@
+1，PHP 框架：
+php框架是很多代码的集合，这些代码是程序结构的代码（非业务代码）。代码中有许多函数、类、功能类包，框架的代码按照一定标准组成一个有机的功能体，这个功能体里面有许多设计模式如mvc、单例、AR等。
+
+2，不使用框架的弊端：
+代码编写没有统一规范、程序项目生命时间短，不延续、一个小地方的修改会牵扯到全局变化，牵一发而动全身（例如一个数据库字段的变化需要修改所有相关的页面）
+
+3，框架的好处：
+快速、稳定、高效搭建程序系统
+维护性、灵活性、适应客户需求方面得到更好的增强
+可以让开发者更多的精力集中在业务层面，无须关心程序底层架构
+可以节省大量的代码量
+
+4，主流php框架：
+a）zendframework:
+功能丰富，属于重量级框架
+b）Yii：
+纯oop框架，该框架的重点是把代码的重用性发挥到了极致。速度非常快，外企使用最多的框架之一。该框架思想来源于symfony、jquery等。
+c） cakephp：
+d) symfony： 基于mvc模式的面向对象的php5框架
+e）thinkPHP： 轻量级框架，内部oop和面向过程代码都存在，是国人自己的开发的框架。融合了structs的action和dao思想和jsp的taglib（标签库）等。封装了crud的常用操作、单一入口模式等。
+
+5, 路由： 系统从url参数中分析出当前请求的分组、控制器、操作就是路由。
+tp框架路由共有4中形式：
+a）基本get形式：
+http://网址/index.php?m=分组&c=控制器&a=操作方法。这种 方式不安全，不时尚。
+b） pathinfo路径形式（是默认方式）：
+http://网址/index.php/分组/控制器/操作方法
+c) rewrite 重写形式（伪静态技术）：省略掉index.php
+http://网址/分组/控制器/操作方法
+d) 兼容形式：
+http://网址/index.php?s=/分组/控制器/操作方法
+
+6, 调用视图： display函数
+没有参数： 访问view/当前控制器名称/当前函数名.html
+$this->diplay('xxx')： 访问view/当前控制器名  目录向下面的xxx.html
+$this->display('xx/xxx'): 访问 view/xx/xxx
+
+7，thinkphp配置文件
+---最常见三个地方：
+--最大的配置文件： thinkphp/conf/convention.php， 这个文件对所有引入了php框架的项目都起作用
+--项目本身：shop/Commom/conf/config.php: 当前shop的配置
+--分组的配置： shop/Home/Config/config.phh: 当前home分组的配置
+--note： 三个配置，后者会覆盖前者，不推荐直接配置最大的配置文件 convention.php
+---系统配置变量的存放：
+--大部分存放在convention.php里面
+--在Behavior行为文件里面定义一部分，例如SHOW_PAGE_TRACE
+--在框架的代码角落里面零星的一些配置变量，例如 MODULE_ALLOW_LIST。要实现可以省略分组信息而不造成歧义，需要设置 'MODULE_ALLOW_LIST' => array('Home'，'Admin')。这样如果遇到不是分组的就会认为是控制器。 使用'DEFAULT_MODULE' => 'Home'
+
+8，两种模式： 默认是生产模式
+--开发调试模式： define('APP_DEBUG', true): 错误提示非常具体，
+--生产模式： define('APP_DEBUG', false): 加载文件较少，执行效率高，错误提示模糊。
+--note： 生产模式下面，对很多文件集成到缓存文件commen~runtime.php里面，这下如果对配置文件例如 convention文件的修改，由于是直接读缓存的就不会再读入convention文件了。
+--note： 生产模式下，会把请求过程中的一些通用为程序文件编译到一个文件里面 shop/Runtime/common~runtime.php里面。而在开发模式下面，每次会自动清除掉common~runtime.php文件。
+
+
+9，切换模板引擎: 默认是think
+'TMPL_ENGINE_TYPE' => 'smarty'
+---处理smarty模板{}标记与css或者js有冲突： 在css、js { xx }内容中间设置空格。 或者让左右标记换行。或者设置<literral></literal> 标记。这样在literal标记里面的内容不会被smarty解析。或者修改smarty默认文件标记：'TMPL_ENGINE_CONFIG' => array('left_delimiter' => '<@@', 'right_delimiter' => '@@>'), 在默认的think模板下面是没有TMPL_ENGINE_CONFIG配置选项的。
+
+
+10，创建model类：
+namespace \Model;
+use Think\Model;  //类似在controller里面是 Think\Controller
+class xxModel extends Model { }  //这样创建的model类操作的默认就是xxModel的明细 “xx”这个数据表
+
+11, config配置数据库：
+	'DB_TYPE'      		 => 	'mysql', //数据库类型
+	'DB_HOST'      		 => 	'localhost', //服务器地址
+	'DB_NAME'      		 => 	'learn_mysql', //数据库名
+	'DB_USER'      		 => 	'root', //用户名
+	'DB_PWD' 	   		 => 	'123', //用户密码
+	'DB_PORT' 	   		 => 	'', //端口号，默认3306
+	'DB_PREFIX'    		 => 	'sw_', //数据库表前缀
+	'DB_PARAMS'    		 => 	array(), //数据库连接参数
+	'DB_DEBUG' 	   		 => 	true, //数据库调试模式，开启之后可以记录sql日志
+	'DB_FIELEDS_CACHE'	 => 	true, //是否启用字段缓存
+	'DB_CHARSET' 		 => 	'utf8', //字符集编码
+
+12，创建model对象的三种形式：
+-----xxModel类去继承 Model，这样操作的是xx表。 在controller里面 new Model\xxModel()
+---- $model =  D(); // 返回一个Model对象，但没有指定数据表
+---- $model =  D('xxx')  //返回一个Model对象，操作的是xxx表。这样就可以不用建一个xxxModel类就可以操作xxx数据表了。
+
+13，select操作： 
+$model->select() //查询所有
+$model->select(id) //查询id值对应的rows
+$model->select('id1,id2,id3')  // 表示 where id in('id1','id2','id3')
+-------select返回的是二维数组。可以利用 $this->assign( 'info', $model->select() ) //调用thinkphp框架的函数assign将 查询到的数组绑定到一个 info变量上，供view使用。
+-----note： $model->find(【id】) 方法只返回一个一维数组，对应的语句后面永远存在一个 limit 1
+
+14, select条件添加：
+$model->field('xx,xx') //要查的字段
+$model->where('where条件')
+$model->order('id desc')
+$model->group('xx')
+$model->having()  //对查到的结果集进行筛选
+$model->limit('前面的条数，偏移量'，’条数‘)
+-----上面可以链式调用： $model->where() -> field()
+------设置完成上面的options 再调用$model->select()就可以组成完整的查询。
+---note： where limit field 三个方法存在父类model里面。having order group 存在于model的魔术方法 __call里面。
+
+15，数据添加：
+-----$model->add(数组): 数组 = array{ 下标=> 值} 其中下标必须是数据表字段名
+-----AR（Active Record活跃记录）方式：  $model->属性（字段名） = 值。 其中属性字段必须跟数据表的字段对应，否则不会添加（会写入，但是这一个不存在的字段被忽略）。 然后调用 $model->add()
+
+16, 数据删除： 一般只做逻辑删除，也就是做一个标志位，如果是删除了就设置为true
+$model->delete()  $model->delete(id)  $model->where() - > dellete() $model->delete('id1,id2')
+
+
+17, 执行原生sql语句： 
+---如果是查询： $model->query($sql);  //返回二维数组
+---如果是添加修改删除： $model->execute($sql) //返回受影响行数。
+
+18，$model->create() 可以进行表单的验证。
+----在父类model里面有create方法。
+------如果需要进行验证，要在model类里面丰富$_validate(在父类model里面定义了空数组):
+protected $_validate = array(
+	//里面没有个array的形式是： array(验证字段，验证规则，错误信息，【验证条件，附加规则，验证时间】)
+	array('username','require','用户名必须填写')  //返回的错误信息也就是通过getError获得是’用户名不能为空‘
+	array('password2','password2','两次密码不一致',0,'confirm') //附加规则是confirm。
+	array('user_eamil','email','邮箱格式不正确') //验证邮箱。
+	array('user_qq','number','qq必须是数字')  //qq必须是全数字
+	array('user_qq','5，12','qq长度必须5~12位'，0，’length‘)  //qq长度验证
+	array('user_xueli','1,4','至少选择一项学历',0,'between')  ///值在某个区间内。
+	array('user_hobby','check_hobby','至少选择两个爱好',0,'callback')  //会调用callback进行验证。 
+
+	//callback 函数。 $arg代表是待验证的项的值。
+	function check_hobby($arg) { count($arg) < 2 ? return true : return false;  }
+);
+------验证条件： 如果给的是0表示字段存在就验证。 如果是1 表示无论是有还是没有都验证。如果是2 表示不为空的时候才进行验证。
+------附加验证规则：　默认是ｒｅｇｅｘ，也可以是ｃａｌｌｂａｃｋ等等。
+------验证时间： 如果是1表示新增数据的时候验证。如果是2表示修改数据的时候验证，如果是3表示全部情况下都要验证。默认值是3。
+------note： 如果要进行批处理验证，也就是要提示所有出现的问题可以设置：protected $patchValidate = ture;
+
+---note: AR规范要求：tp框架的ar是仿真的，因为每个业务model模型里面并不存在数据表字段信息
+a） 一个model模型类对应一个具体的数据表
+b）model模型类实例化的对象与数据表的一条记录对应
+c）model对象的属性与记录的字段对应。  
+----note： add方法返回的是新添加的数据的id
+
+19，数据修改：$model->save， 操作的两种方式跟上面的add方法基本相同。
+---note： 修改的是后一般会有条件：$model->where()。否则必须要设置主键的值 $model->id = ..
+---返回过滤之后的跟数据库字段匹配的数组。 否则返回false
+-----数据操作失败，可以使用 $model->getError()得到错误信息。
+
+20，命名空间： 如果没有在同一次执行不能出现同样名字的函数 常量  类名
+----使用： namespace 命名空间名称；
+----常量： define(name,value): 忽略命名空间   const name=value: 针对命名空间有影响。
+-----const与define： const可以在类的内部申明类常量也可以在外部申明常量。const申明的常量对命名空间敏感。const可以申明多个同名称常量，而define只能申明一次，否则出现重定义。
+-----访问元素如果没有带命名空间，就默认是上面最近的那个。
+-----note： namespace 语句之前不能有任何的语句，即使是header语句也必须放在它之后。
+----note：命名空间是虚拟抽象的空间，不是真实的目录。
+----note： 如果多个文件使用同一个空间，那么他们不能存在同一个名称的元素。
+----note： tp框架会将namespace 在类文件引入的时候转化为路径的一部分进行类的加载（自动加载）。 但是namespace本身是虚拟的，不代表真实目录。
+
+21，多级命名空间： 空间本身是虚拟的抽象概念，使用像是文件夹。
+namespace xxxx\xxxx1;
+namespace xxxx\xx2;
+\xxxxx\xx2\function1(); 
+-----note: 如果是使用\xxx\xxx，使用的是绝对路径。如果使用 xxx\xxxx使用的是相对路径，是在当前空间下面查找xxx\xxxx
+
+22，引入命名空间：　避免多次写重复的命名空间名称。便于书写跟维护。
+-----引入： use xxx\xxx;  //这样可以直接使用 xxx\xxx下面的东西，不需要带上整个空间名，只需要带上最后一个限定名称，也就是最后一级空间名进行访问。
+----使用xxx\xxx下面的function： xxx\function1();  /// 省去了前面的 "\xxx\"
+
+23, 对于类的元素引入：为了跟方便的操作，不需要书写限定的空间名，可以直接对类（函数跟常量不可）进行空间的引入，这样在下面可以直接使用类，不需要再类的前面带上空间修饰
+----引入类： use 空间\空间\类
+----使用： use 空间\空间\类;  new 类（）；
+----note： 如果当前空间里面已经有了同名的类，就不能再直接引入类了，否则会报错。解决方法是可以给引入的类加一个别名： use  空间\空间\类 as 别名；
+
+24，公共空间：如果一个ｐｈｐ里面没有ｎａｍｅｓｐａｃｅ关键字的申明，则该文件里面的文件都存在同一个公共空间。
+－－－在其他空间里面访问公共空间：　\公共空间元素
+---note: 如果当前空间没有某个元素就会自动到公共空间进行查找，也就是通过非限定名称访问元素，首先访问本空间，然后访问公共空间。
+----note： 引入文件里面存在namespace 是不会对当前空间存在改变的。当前文件里面在include语句之后还是访问的本空间。
+----note： 对于公共空间，一般推荐使用 \xxx 访问，这样很明了，可读性强。
+
+
+
+
+
+
+
+***************************************************************************
+tp框架里面避免自己熟悉$_GET, 会出现这样的形式：
+function func(参数1，参数2【 = 默认值】) { 这里面直接使用参数1跟2， 参数1，参数2的名称要跟页面传递的属性值相对应}
+-----note： 如果参数没有在代码里面设置默认值，就必须在页面传递，否则会出错。
+***************************************************************************
+
+
+
+***************************************************************************
+---css文件会独自放松请求，可以设置绝对地址请求请求。
+---css内部的地址，例如图片url，相对于css文件设置，跟其他文件没有关系。
+---html文件内部图片的url，可以相对于html文件设置，也可以相对于站点根目录设置（www.xx.com/）。
+---pathinfo模式下，如果html里面的引用是相对于html本身的，会导致查找的路径变成了 /home/controller/action/下面获取资源
+*****************************************************************************
+
+*******************************************************************
+tp框架提供下列常量：
+http://网址/index.php/分组/控制器/操作方法
+__MODULE__:分组信息。 http://网址/index.php/分组
+__CONTROLLER__: 路由地址控制器信息  http://网址/index.php/分组/控制器
+__ACTION__: 路由地址操作方法信息  http://网址/index.php/分组/控制器/操作方法
+**** MODUEL_NAME CONTROLLER_NAME  ACTION_NAME  只有名字。
+*******************************************************************
+
+**************************************************
+http://网址/index.php/分组/控制器/操作方法.html  其中.html是伪后缀，具体伪后缀可以是什么可以在config里面配置。
+**************************************************
+
+**************************************************
+a标签 target：
+_blank: 新标签展示
+_self: 当前页面展示，如果当前本身在frame里面就是在这个frame里面展示
+_top: 会覆盖全部的frameset标签
+frame标签的name属性： 在指定的frame里面展示
+-----如果target属性的值不识别，就默认的_blank
+**************************************************

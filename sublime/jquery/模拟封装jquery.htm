@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模拟封装jquery</title>
+	<script src='./my-jquery.js'></script>
+	<script>
+		window.onload = function() {
+			console.log( $( '#div1' ) );
+			console.log( $( 'div' ) );
+			console.log( $( document.getElementById('div3') ) );
+			console.log( $( window.xx ) );
+
+			//设置css
+			$( 'div' ).css( 'width', '100px' );
+			$( 'div' ).css( 'height', '100px' );
+			$( 'div' ).css( 'backgroundColor', 'red' );
+			//获取css
+			console.log( $( 'div' ).css( 'height' ) );
+
+			//设置属性
+			$( '#div1' ).attr( 'name', 'xx' );
+
+			//获取属性
+			console.log( $( '#div1' ).attr( 'name' ) );
+		}
+
+		/**
+		 * 通过 each 实现对三个div的设置
+		 * @return {[type]} [description]
+		 */
+		function f1(){
+			$('div').each(function() {
+				$(this).css('backgroundColor','green');
+			});
+		}
+	</script>
+</head>
+<body>
+	<div id="div1"></div>
+	<div></div>
+	<div id='div3'>第三个div</div>
+	<input type="button" value='each' onclick='f1()'>
+</body>
+</html>

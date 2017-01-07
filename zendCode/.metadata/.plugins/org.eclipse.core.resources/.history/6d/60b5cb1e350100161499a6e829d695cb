@@ -1,0 +1,6 @@
+<?php
+//接受用户登录数据
+//id
+$id=$_POST['id'];
+//密码
+$password=$_POST['password'];

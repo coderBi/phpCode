@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+	#mod_rewrite 需要加上followsymlinks，否则会报错
+	Options +FollowSymlinks
+
+	RewriteEngine on
+
+	#RewriteCond，表示重写的条件。下面分别表示如果请求的文件名不是目录 如果不是文件。
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+
+	# 符合上面两条重写判断就执行下面的重写规则。其中 [L] 表示这是最后一个匹配项，不在向下进行匹配。
+	RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
+</IfModule>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>js 加载xml</title>
+	<script type="text/javascript">
+		window.onload=function(){
+			document.getElementById("province").onchange=function(){
+				//加载xml
+				var xmlDoc=parseXML("./cities.xml");
+				//得到xml里面的所有的省份
+				var provinceXmlElements=xmlDoc.getElementsByTagName("province");
+				
+				//获取被选中选项的值
+				var textSelected=this.getElementsByTagName("option")[this.selectedIndex].value;
+				for(var i=0;i<provinceXmlElements.length;++i){
+					var province=provinceXmlElements[i];
+					if(province.getAttribute("name")==textSelected){
+						var cities=getCities(province);
+						var cityHtmlElement=document.getElementById("cities");
+						//清空现在页面上city里面的内容
+						removeAllChildren(cityHtmlElement);
+
+						//遍历xml里读到的cities，添加到html页面
+						for(var j=0; j<cities.length;++j){
+							var city=cities[j];
+							//获取city内容文本
+							var cityText=city.firstChild.nodeValue;
+							//创建新的option
+							newOption=document.createElement("option");
+							newOption.value=cityText;
+							newOption.appendChild(document.createTextNode(cityText));
+							//添加新的option到页面
+							cityHtmlElement.appendChild(newOption);
+						}
+						break;
+					}
+				}
+			}
+		}
+		/*
+		得到xml里面的一个省下面的所有城市
+		 */
+		function getCities(province){
+			return province.getElementsByTagName("city");
+		}
+
+		//删除一个元素的所有孩子
+		function removeAllChildren(node){
+			var children=node.childNodes;
+			while(children.length >1){
+				node.removeChild(children[1]);
+			}
+		}
+
+		function parseXML(fileXmlName){
+			var xmlDoc, xhr;
+			
+			var xhr =  window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new window.XMLHttpRequest();
+			xhr.open("get",fileXmlName,false);
+			xhr.send(null);
+			xmlDoc = xhr.responseXML.documentElement;
+			
+			return xmlDoc;
+		}
+	</script>
+</head>
+<body>
+	<select name="" id="province">
+		<option value="">请选择省</option>
+		<option value="吉林省">吉林省</option>
+		<option value="山东省">山东省</option>
+		<option value="辽宁省">辽宁省</option>
+	</select>
+	<select name="" id="cities"><option value="请选择城市">请选择城市</option></select>
+</body>
+</html>

@@ -1,0 +1,3 @@
+[ 2016-05-29T11:42:19+08:00 ] 127.0.0.1 /sublime/thinkphp/shop/
+ERR: Syntax Error in template "D:/phpCode/sublime/thinkphp/shop/Home/View\Index\index.html"  on line 405 ".boxCenterList form{display:inline;}"  - Unexpected ":", expected one of: "}" , " "
+

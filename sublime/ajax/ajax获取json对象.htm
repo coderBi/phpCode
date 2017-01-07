@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ajax获取json对象</title>
+</head>
+<body onload="getPerson()">
+	<script>
+		function getPerson(){
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState == 4){
+					eval("var json_obj = " + xhr.responseText); //这样json_obj就Object对象了
+					console.log(json_obj);
+					console.log(json_obj.name);
+					console.log(json_obj.age);
+				}
+			}
+			xhr.open("get",'./json_str.person.php',true);
+			xhr.send(null);
+		}
+	</script>
+</body>
+</html>

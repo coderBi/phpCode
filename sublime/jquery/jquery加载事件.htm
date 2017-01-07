@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jquery 加载事件</title>
+	<script src='./jquery-1.12.3.min.js'></script>
+	<script>
+		///这三个加载事件都会执行，如果是js里面的 Onload出现三个，会出现后者覆盖前者的情况
+		$(document).ready(function() {
+			alert('jquery加载完成');
+		});
+
+		//jquery对象没有dom对象
+		$().ready(function() {
+			console.log('$()');
+		});
+		$(function() {
+			console.log('$(function)');  
+		});
+		window.onload = function(){
+			alert('js onload加载完成');  //可以发现在图片还没显示的时候jquery加载事件已经执行，但是window.onload是跟图片显示同时出来的。
+			alert($('img').width());
+		}
+	</script>
+</head>
+<body>
+	<h2>加载事件的时机</h2>
+	<img src="./phpgd.php" alt="">
+</body>
+</html>

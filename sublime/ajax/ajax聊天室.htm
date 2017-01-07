@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ajax 聊天室</title>
+	<style>
+		#content {
+			width: 700px;
+			height: 500px;
+			background: silver;
+			border: 1px solid #000;
+			overflow: auto;  /*overflow为auto，当内容超出的时候会自动显示滚动条*/
+		}
+		#content_say {width: 400px;}
+	</style>
+	<script>
+		window.onload = function(){
+			checkLogin();
+			setInterval("getData()",'1000');  //每两秒去数据库取一次最新记录
+			document.getElementById('form_say').onsubmit = function(event){
+				var fd = new FormData(this);  //页面表单信息
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState == 4){
+						var result = xhr.responseText;
+						//如果写入成功
+						if(result){
+							//将输入框重置为空
+							document.getElementById("content_say").value = "";
+							//显示发言成功
+							document.getElementById('say_result').innerHTML = "发言成功";
+							setTimeout("clearSayResult()",'1000');
+						} else {
+							//写入失败，提示发言失败
+							document.getElementById("say_result").innerHTML = "发言失败";
+						}
+					}
+				}
+				xhr.open('post','/sublime/ajax/ajax_talk/?c=Record&a=add');
+				xhr.send(fd);
+
+				event.preventDefault();
+				return false;
+			}
+		}
+
+		/**
+		 * 检查是否已经登录
+		 */
+		function checkLogin() {
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() { onReady1(xhr) };
+			xhr.open('get','/sublime/ajax/ajax_talk/?c=User&a=checkLogin',false);
+			xhr.send(null);
+		}
+
+		/**
+		 * checkLogin 中xhr的 onreadystatechange 触发事件
+		 * @param  ajax object  xhr ajax对象
+		 */
+		function onReady1(xhr) {
+			if(xhr.readyState == 4){
+				eval("var json_str = "+ xhr.responseText);
+				if(json_str == "")  setNoLogin();
+				else setLogin(json_str);
+			}
+		}
+
+		function setNoLogin() {
+			var login = document.getElementById('login');
+			var s = "<a href='javascript:Login()'>未登录</a>";
+			login.innerHTML = s;
+		}
+
+		function setLogin(json_str) {
+			var login = document.getElementById('login');
+			var s = "<span>您的用户名是:" + json_str + "</span><a href='javascript:logOut()'>退出</a>";
+			login.innerHTML = s;
+		}
+
+		//登录
+		function Login(){
+			var name = prompt("请输入用户名");  //这里省去了格式校验
+			var pwd = prompt("请输入密码");
+			name = escape(name);
+			pwd = escape(pwd);
+
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == 4) {
+					eval("var result = " + xhr.responseText);
+					if(result) checkLogin();  //登录成功，就重新检查登录的状态
+				}
+				
+			};
+			xhr.open('get','/sublime/ajax/ajax_talk/?c=User&a=login&u=' +name+ '&pw='+pwd);
+			xhr.send(null);
+		}
+
+		//登出
+		function logOut(){
+			//清楚cookie session
+			var xhr = new XMLHttpRequest();
+			xhr.open('get','/sublime/ajax/ajax_talk/?c=User&a=logout',false);
+			xhr.send(null);
+			//刷新页面登录状态
+			checkLogin();
+		}
+
+		var maxId = 0; //记录目前已经取到的最大数据库记录的id
+		function getData() {
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == 4){
+					var content = document.getElementById("content"); //得到页面content节点
+
+					//添加新元素到content节点
+					eval("var json_obj = " + xhr.responseText);
+					for(var i = 0; i < json_obj.length; ++i){
+						var s = "";
+						var item = json_obj[i];
+						s += item.sender;
+						s += "&nbsp;对&nbsp;";
+						s += item.receiver;
+						s += "&nbsp;说:&emsp;";
+						s += item.content;
+
+						//创建一个p标签 将s包裹起来， 然后将p标签加到 id为 content的div下面
+						var p = document.createElement("p");
+						p.innerHTML = s;
+						content.appendChild(p);
+						//设置滚动条滚动到最下面, div.scrollTop 是div滚动了多少。 div.scrollHeight是包括滚动高度的总高度
+						content.scrollTop = content.scrollHeight - content.style.height;
+						maxId = item.id;  //每写入一条记录，就将maxId设置为这项记录的id
+					}
+				}
+			}
+			xhr.open('get','/sublime/ajax/ajax_talk/?c=Record&a=get&maxId='+ maxId);
+			xhr.send(null);
+		}
+
+		/**
+		 * 清空发言结果显示文字
+		 */
+		function clearSayResult(){
+			document.getElementById("say_result").innerHTML = '';
+		}
+	</script>
+</head>
+<body>
+	<div id="login"></div>
+	<div id="content"></div>
+	<form action="/sublime/ajax/ajax_talk/?c=Record&a=add" id="form_say" method='post'>
+		<input type="text" id="content_say" name="content_say">
+		<input type="hidden" value='所有人' name='receiver'>
+		<input type="submit" value="发送"><span id='say_result'></span>
+	</form>
+</body>
+</html>

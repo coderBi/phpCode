@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jquery 对ajax封装</title>
+	<script src='./jquery-1.12.3.min.js'></script>
+	<script>
+		$(function(){
+			$.get('./json1.php','',function(msg){
+				var div = $('div');
+				for(var key in msg){div.html(div.html() + key + ":" + msg[key] + '<br>');}
+			},'json');
+		});
+	</script>
+</head>
+<body>
+	<div></div>
+</body>
+</html>

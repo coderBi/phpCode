@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ajax无刷新分页</title>
+	<style>
+		h2,div {width: 700px; margin:auto;}
+		h2 {text-align: center}
+		table {
+			border: 1px solid #000;
+			border-collapse: collapse;
+		}
+		td {border: 1px solid #000;}
+	</style>
+	<script>
+		/**
+		 * 请求getData.php数据 填充到 id=result的div中
+		 */
+		function showPage(page){
+			page = page || 1;
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState == 4){
+					var s = "<table><thead><tr><td>序号</td><td>姓名</td><td>性别</td><td>省份</td><td>学院id</td></tr></thead><tbody>";
+					//获得json字符串
+					eval("var json_str  = " + xhr.responseText);
+					//遍历json前面length-1个对象填充到table里面
+					for(var i = 0; i < json_str.length - 1; ++i){
+						var item = json_str[i];
+						s += "<tr>";
+						s += "<td>" + item['num'] + "</td>"
+						s += "<td>" + item['name'] + "</td>"
+						s += "<td>" + item['gender'] + "</td>"
+						s += "<td>" + item['provence'] + "</td>"
+						s += "<td>" + item['college_id'] + "</td>"
+						s += "</tr>";
+					}
+					s += "<tr><td colspan='5'>" + json_str[json_str.length -1] +"</td></tr>";
+					s += "</tbody></table>";
+					document.getElementById('result').innerHTML = s;
+				}
+			}
+			xhr.open('get','./getData.php?page='+page,false);
+			xhr.send(null);
+		}
+
+		/**
+		 * 页码输入框enter
+		 * @param {[type]} event 页面事件
+		 */
+		function EnterKey(event){
+			event = window.event || event;
+			var key = event.keyCode ? event.keyCode : event.which;  //ie下面调用 event.keyCode
+			if(key == 13){
+				GoTo();
+			}
+		}
+
+		/**
+		 * 点击Go按钮效果
+		 */
+		function GoTo(){
+			var input = document.getElementById("pageGo");
+			var page = input.value;
+			if(isNaN(page)){
+				alert("输入页码无效");
+				return;
+			}
+			//page > document.getElementById('maxPage').value。这里是两个字符串进行比较大小。不会进行数据类型的转换
+			else if( largerStrLikeNum(page,document.getElementById('maxPage').value) ){
+				alert("输入页码超出最大存在页码");
+				return;
+			}
+			showPage(page);
+		}
+
+		/**
+		 * 让两个字符串用数字方式比较
+		 * @param  {string} str1 
+		 * @param  {string} str2 
+		 * @return {boolean}   如果str1比str2大返回true 否则返回false   
+		 */
+		function largerStrLikeNum(str1,str2){
+			return	parseInt(str1) > parseInt(str2);
+		}
+	</script>
+</head>
+<body onload="showPage()">
+	<h2>ajax无刷新分页</h2>
+	<div id="result"></div>
+</body>
+</html>

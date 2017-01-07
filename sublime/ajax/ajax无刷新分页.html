@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ajax无刷新分页</title>
+	<style>
+		h2,div {width: 700px; margin:auto;}
+		h2 {text-align: center}
+	</style>
+	<script>
+		/**
+		 * 请求getData.php数据 填充到 id=result的div中
+		 */
+		function showPage(page){
+			page = page || 1;
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState == 4){
+					document.getElementById('result').innerHTML = xhr.responseText;
+				}
+			}
+			xhr.open('get','./getData.php?page='+page,false);
+			xhr.send(null);
+		}
+
+		/**
+		 * 页码输入框enter
+		 * @param {[type]} event 页面事件
+		 */
+		function EnterKey(event){
+			event = window.event || event;
+			var key = event.keyCode ? event.keyCode : event.which;  //ie下面调用 event.keyCode
+			if(key == 13){
+				GoTo();
+			}
+		}
+
+		/**
+		 * 点击Go按钮效果
+		 */
+		function GoTo(){
+			var input = document.getElementById("pageGo");
+			var page = input.value;
+			if(isNaN(page)){
+				alert("输入页码无效");
+				return;
+			}
+			showPage(page);
+		}
+	</script>
+</head>
+<body onload="showPage()">
+	<h2>ajax无刷新分页</h2>
+	<div id="result"></div>
+</body>
+</html>

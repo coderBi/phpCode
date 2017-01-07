@@ -1,0 +1,206 @@
+数据控制语言：
+	用户管理：
+	创建用户： create user 'uu'@'localhost' identified by '123'
+	删除用户 drop user ''@''
+	修改密码 set password for ''@'' = password()
+权限管理
+	授权： grant insert,select on xx.xx to ''@'' identified by ''
+	去权限；revoke select，update delete on xx.xx from ''@''
+事务控制
+	事务：多条语句执行效果是一条
+	事务的特点：原子性 一致性 持久性 隔离性（分别单独运行）
+	流程： begin/start transaction .... commit ...rollback...
+mysql编程
+	语句块标识符: 【标识符：】begin end [标识符];
+
+	leave:退出一个语句块，可以是end语句块或者其他循环的语句块。
+标识符： loop
+begin
+	leave 标识符；
+end;
+end loop 标识符；
+
+编程环境: 函数 过程 触发器的定义过程中
+普通变量只可以用在编程环境中
+会话变量可以到处使用
+declare var  set var=  set @var= 
+select @var:=  select 2 into @var 一个有结果集输出 一个有结果集输出
+
+函数： 必须要返回一个数据
+create function f1()
+returns datetime
+begin
+return now();
+end;
+
+drop function  f1;
+
+存储过程：也算是函数，不能返回数据值，但是其中可以有返回结果集的语句
+create procedure p1(in|out)
+begin
+	select from...
+end;
+call p1();
+drop procedure p1;
+
+trigger:设定某个表在执行某个操作的时候会同步执行
+create trigger t1 before insert on xxx each row 
+begin...end;
+
+#创建一个函数，将三个参数插入一个表
+create function insertData(p1 int,p2 int, p3 int)
+returns int
+begin
+	insert into tb1 values(null,p1,p2,p3);
+	return 1;
+end;
+#创建一个过程，将三个参数插入一个表
+create procedure pro1(p1 int,p2 int, p3 int)
+begin
+	insert into tb1 values(null,p1,p2,p3);
+end;
+
+面向过程： 步骤分割，一步一步执行
+面向对象：任务分解为多个对象，每个对象拥有属性方法，任务的完成是多个对象协同完成
+类： 一类事物共有特征的表述，对象的抽象
+对象： 根据一个类作为模板创建出来的具体实体
+对象的传值： 引用、值传递是一个效果。因为其实对象变量存的是对象的编号结构
+
+类常量： const 常量名=常量值
+实例属性： public $var = 初始值；
+静态属性： static 【public】 【=初始值】
+实例方法： public function method()
+静态方法： static public function method()
+构造方法： 一个对象被创建的时候自动调用的方法。方法名__construct 
+析构方法： __destruct 对象销毁的时候自动调用 不能有参数
+
+				类					对象
+普通属性							y
+普通方法							y
+const常量		y					y
+static属性		y					y
+static方法		y					y
+构造
+析构
+
+class student {
+	var $name;
+	var $age;
+	var $sex;
+	static public $count=0;
+	const c1 = "常量1";
+	function __construct($name,$age,$sex){
+		$this->name = $name;
+		$this->$age = $age;
+		$this->$sex = $sex;
+		self::$count++;
+	}
+	function __destruct(){
+		echo new self('',,'')->name."加入了大家庭,目前共有".self::$count."成员<br>";
+	}
+	public function selfIntroduce(){
+		echo "我叫".$this->name."，".$this->sex."今年".$this->age."<br>";
+	}
+}
+
+继承： A的特征信息传递给B  单继承
+控制访问  private public protected
+parent： 代表父类 self在类里面代表其本身
+$this: 代表当前对象
+构造与析构： 如果子类没有就不调用父类的，子类中可以利用parent认为调用父类同名方法。
+重写： 子类中重写的属性与范围，其防卫权限不能更小，只能更大。子类中除了构造方法其他的重写函数的参数必须跟父类中被重写的方法的参数保持一致
+父类的私有方法不能进行重写，子类也不能出现同名函数
+最终类： final class。不能被继承
+最终方法：final function{}。权限可以比不能覆盖的private更大，方便使用
+设计模式： 针对某种问题，大家积累的经验性总结
+	工厂模式： 提供一个类，返回一个对象
+	单例模式： 一个类只能实例化一个对象
+
+抽象类： 不能实例化的类
+abstract class 类名
+抽象方法： 只有方法头 没有方法体，需要子类去实现
+abstract function 方法名 
+抽象方法必须放在抽象类中，也就是只要有抽象方法，类必须是抽象的。但是抽象类里面是可以放非抽象方法的。接口里面只能放抽象方法跟常量，也就是只有接口里面是只能放抽象方法的
+抽象方法的子类要么自己也是抽象类这样可以不去处理抽象方法，否则必须去实现父类的抽象方法
+重写： 访问权限不能更小  方法的参数保持一致
+
+重载： php里面的重载是指在一个类或者对象中针对未定义的函数或者属性进行访问的时候的处理机制
+其他语言中的重载： 函数名称不同，参数不同的函数
+属性重载:
+__get('属性名') __set(属性名，属性值) __isset(属性名) __unset(属性名)
+方法重载： __call | __calllstatic(方法名，参数列表) 
+
+例如： __get($var){return isset($arr[$var]) ? $arr[$var] : '没有这个值'} __set($var,$value){ $arr[$var] = $value} __isset(){return isset($arr[$var])} __unset(){unset($arr[$var])}
+
+接口： 只能有常量跟抽象方法的抽象类
+interface inter{常量列表 抽象方法列表}
+接口的作用是为了应对多继承的问题，接口可以进行多实现
+接口里面不要出现权限控制跟abstract关键字
+class implements inter1,inter2{}
+
+成员访问 对象：：静态|常量
+
+类的自动加载：在代码运行到某一个位置的时候php内部可以做到自动加载相应的类文件。
+使用时机： new对象  使用类的静态方法
+实现： 定义内部的魔术方法： __autoload($name){if(file_exists($name){require_once $name})} 。自定义自动加载函数： spl_auto_register('$method')。自定义函数可以防止多个文件进行引用的时候出现的函数重名的问题
+ 
+对象的克隆： $o2 = clone $o1; 两个对象内容一样，但是对象的编号不一样。
+单例防止克隆: 将__clone（）设置为private
+对象遍历： foreach($ob as key=>value)
+内置标准类： stdclass
+数组转对象： 下标编程属性名，不应该用数字下标，因为这样没有办法进行引用。
+null转变成对象： 空的stdclass
+标量转对象： stdclass的对象，属性名只能是scalar
+类型约束: php只支持函数定义的形参进行类型约束，支持的类型包括： 类  接口  数组（array）
+序列化： 内存数据存到硬盘里面
+反序列化： 硬盘序列化数据读到内存里面
+对象的序列化的时候会自动调用__sleep()可以设定那些属性进行序列化。对象的反序列化的时候会自动调用__wakeup()可以在里面对没有通过反序列化进行赋值的属性进行赋值设定。
+__tostring():当对象当做字符串操作的时候会自动调用
+__invoke（）对象当做函数调用的时候会自动调用
+
+与类有关常量： __CLASS__ __METHOD
+class_exists interface_exist  get_class get_class_vars get_object_vars  
+instanceof: 一个对象是直接类的以及其上级类的实例
+static： 用在函数或者方法中，定义局部的静态变量，用在类中可以定义静态属性或者静态方法。
+static 也可以表示当前调用这个方法的类
+封装： 类就是一个语法上的封装，将属性跟方法封装起来。尽可能少的对外开放权限并且满足使用的需求
+继承： 满足代码的复用
+多态： 多种状态
+
+显示与逻辑相分离： php后台代码进行数据的处理， html与css进行前台页面的显示控制： <?php ?> <html>
+模板技术： 将html独立出来。这样可以根据需要选择不同的视图文件
+mvc思想： 
+控制 模型 视图
+model { function {return data}}
+control: $data = new model()->function()
+基础模型类：将多个模型类的共同部分，例如数据库操作部分提取到一个基础模型类 
+
+控制器的作用： 通过用户的请求调用模型类得到数据，调用视图进行数据的显示
+控制器划分： 按照功能进行分组，将若干功能分成一个组，例如将所有对用户信息的操作，封装成一个用户控制器
+模型通常只是从一个表的所有可能的数据需求的角度进行划分。每一个表使用一个模型
+控制器按功能划分，而模型按照数据库表划分
+控制器的“动作”： 控制器内部的方法（函数）。控制器本身是一个类，其中的方法被称为动作，因为每一个方法对应了网页上的某个请求。应用中一般取名是xxxAction。
+基础控制器类： 通常用于所有控制器都需要用到的一些功能。例如 set编码写在构造方法中，被所有控制器调用，header("content-type:text/html;charset=utf-8")
+function gotoUrl($msg,$url,$time){ echo $msg;header("refresh:$time;url=$url")}
+
+视图层： 只是输出数据，一种叫做标量数据，一种叫做数组数据，一种叫做对象数据
+
+请求分发器： 前提是每一个请求中都应该带上控制器的信息。
+
+$c = 
+$a = 
+require_once '$cModel'
+require  '$cController'
+require 'factoryModel'
+require 'basecontroller'
+
+$c .= "controller"
+$a .= "action"
+new $c()->$a()
+
+$_SESSION: 操作所有跟php相关的session操作，超全局变量
+
+$_SESSION['KEY']='VARLUE';
+
+unset($_SESSION['KEY'])
+session_start

@@ -1,0 +1,100 @@
+历史：
+gml（通用标记语言）--> sgml(标准通用标记语言) --> html --> xml
+
+html的缺点：
+1，标签是规定好的，用户不能自定义
+2，文件的显示样式与数据绑定在一起，不方便复用
+3，html标签是没有含义的
+4，不同浏览器解析不同。所以出现了xhtml、html5进行升级
+
+xml作用：
+1，可以作为程序间通信的标准
+例如：
+	<sender>xx</sender>
+	<content>xxx</content>
+	<time>xxx</time>
+2，可以用作配置文件
+例如:
+	<dbinfo>
+	<host>127.0.0.1</host>
+	<user>xx</user>
+	<password>xxx</password>
+	</dbinfo>
+3,充当小型数据库
+
+知识点：
+1，xml描述：<?xml version="1.0" encoding="utf-8" standalone="no"?>。standalone默认是no，表示跟其他文件有关联
+2，一个xml文件只能有且仅有一个根节点
+3，标签、元素、节点;
+4，php解析内容可能会将内容前面的换行符读入
+5，xml标签对大小写敏感
+6，标签以下划线或者字符开头，可以有数字
+7，注释：<!--注释内容-->,不可嵌套
+
+xml中属性： 
+1，属性值用单引号或者双引号分割	
+2, xml预定义实体引号：&lt; &gt; &apos;(单引号) &quot;(双引号)  &amp;(表示“&”)
+
+CDATA节: 如果一段内容里面包含了特殊字符，可以用CDATA包裹
+<![CDATA[内容]]>
+例如：<![CDATA[图片二进制数据]]>，xml保存图片
+
+xml中的处理指令PI(processing instruction)：
+例如：可以引进css文件：<xml-stylesheet type="text/css" href="xx" ?>
+
+
+dtd: document type definition
+1，作用：约束xml文件，也可以约束html xhtml
+2，常用的约束除了DTD还有schema
+3，默认情况下，浏览器不会检测
+4，引入外部dtd：<!DOCTYPE 跟节点名称 SYSTEM "DTD文件URl"> 或者 <!DOCTYPE 文档根节点名称 PUBLIC "DTD名称" "DTD文件的url">。例如<!DOCTYPE html PUBLIC "./W3C/DTD/ HTML 4.01 Transitional/EN" "http://www.w3c.org/TR/html4/loose.dtd">
+5,内部dtd：<!DOCTYPE 根节点名称 [
+<!ELEMENT 根节点 (XX)>
+<!ELEMENT XX (#PCDATA)>
+]>
+----内外部dtd: <!DOCTYPE 跟节点名称 SYSTEM "DTD文件URl"[内部定义的内容]>------------------------------
+6，约束内容：<!ELEMENT 节点名称 (可以有的子标签名称列表)>。
+---如果约束节点的内容是#PCDATA表示这个节点不能有子节点，但是可以包裹任何字符数据
+---如果是EMPTY,表示不能包含任何子元素跟文本
+---ANY 表示可以包含任何在dtd中定义的内容
+***约束内容里面，如果用了+表示至少有一个，如果用了*表示至少有0个，如果？表示可以有0个或1个，如果是| 表示选择，如果是“，”表示顺序。默认情况下有且只能有一个
+***子元素内容之间的顺序也有约束效果
+7，元素属性列表约束：
+<!ATTLIST 元素名称
+	属性名称  类型  属性特点
+	属性名称  类型  属性特点
+>
+类型有： CDATA  属性值可以是字符或者数字
+		 ID   属性值是唯一的，必须是字母开头，可以带数字
+		 IDREF/IDREFS  是id引用，如果是idrefs多个id中间用空格隔开
+		 Enumerated  枚举。 例如：属性婚姻状态(单身|已婚) #IMPLIED
+		 ENTITY/ENTITIES  实体
+特点有：#REQUIRED   必须有
+	  #IMPLIED		可选
+	  #FIXED value   固定值为后面的value
+	  Default value  如果不给值就是后面的默认value
+
+8,实体： 用于一段内容创建一个别名，以后可以在xml文档中使用；
+引用实体：在dtd中定义一个引用实体，在xml中就可以使用它。
+例如在dtd中: <!ENTITY  XX  "这是一个实体">。然后在xml中间可以通过”&XX;“使用它。建议将实体定义放在dtd最前面
+--------note:通过测试，现在的浏览器已经不支持读入外部引用的dtd里面定义的实体了。只可以将实体定义在内部了-------------
+参数实体：dtd中定义： <!ENTITY %  实体名称  "实体内容">。参数实体只能使用在dtd里面，使用形式为"%实体名称;"
+
+
+php操作xml常用技术： php  dom
+					 php结合xpath
+					 SimpleXml
+Dom: document object model,将一个xml文件当做一个对象模型来操作
+1，dom解析步骤：
+	创建一个dom对象： $xmldoc=new DOMDocument();
+	指定加载的文件：$xmldoc->load("xx.xml");
+	获取关心的节点: $nodes=$xmldoc->getElementsByTagName("xx");
+	遍历： for($i=0;$i<$nodes->length;++$i){ 取出关心的信息}
+
+
+***************************************************************
+---xml的命名空间的作用：多个xml一起引用，如果出现了遵从不同约束的两个同名的
+标签名，就会出现解析问题。为了解决这个问题，可以在标签前面加上命名空间，形式是
+<namespace:标签名>。这样就可以区分不同的同名标签了。
+
+***************************************************************

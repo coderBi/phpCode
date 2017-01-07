@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>修改用户</title>
+</head>
+<body>
+	<form action="?action=UpdateUser" method='post'>
+		<input type="hidden" name='id' value='<?php echo $user['id'] ?>'>
+		<table>
+			<tr><td colspan='2'>添加数据：</td></tr>
+			<tr>
+				<td>用户名</td>
+				<td>
+					<input type="text" name='name' <?php echo "value='".$user['name']."'"; ?>>
+				</td>
+			</tr>
+			<tr>
+				<td>密码</td>
+				<td>
+					<input type="password" name='password' <?php echo "value=''"; ?>>
+				</td>
+			</tr>
+			<tr>
+				<td>年龄</td>
+				<td>
+					<input type="text" name='age' <?php echo "value='".$user['age']."'"; ?>>
+				</td>
+			</tr>
+			<tr>
+				<td>学历</td>
+				<td>
+					<select name="xueli">
+						<option value="0">请选择学历</option>
+						<option value="1" <?php if($user['xueli'] == '中学') echo "selected"; ?>>中学</option>
+						<option value="2" <?php if($user['xueli'] == '大学') echo "selected"; ?>>大学</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>兴趣</td>
+				<td>
+					<?php $fav = explode(",", $user['fav']); ?>
+					<label><input type="checkbox" name='fav[]' value='1' <?php
+						if(in_array('排球', $fav)){echo 'checked';}
+					 ?>>排球</label>
+					<label><input type="checkbox" name='fav[]' value='2' <?php
+						if(in_array('篮球', $fav)){echo 'checked';}
+					 ?>>篮球</label>
+					<label><input type="checkbox" name='fav[]' value='4' <?php
+						if(in_array('地球', $fav)){echo 'checked';}
+					 ?>>地球</label>
+				</td>
+			</tr>
+			<tr>
+				<td>来自</td>
+				<td>
+					<label><input type="radio" name="aspect" value='1' <?php if($user['aspect'] == '东北') echo 'checked=checked' ?>>东北</label>
+					<label><input type="radio" name="aspect" value='2' <?php if($user['aspect'] == '华北') echo 'checked=checked' ?>>华北</label>
+					<label><input type="radio" name="aspect" value='3' <?php if($user['aspect'] == '西北') echo 'checked=checked' ?>>西北</label>
+					<label><input type="radio" name="aspect" value='4' <?php if($user['aspect'] == '华东') echo 'checked=checked' ?>>华东</label>
+					<label><input type="radio" name="aspect" value='5' <?php if($user['aspect'] == '华南') echo 'checked=checked' ?>>华南</label>
+					<label><input type="radio" name="aspect" value='6' <?php if($user['aspect'] == '华西') echo 'checked=checked' ?>>华西</label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan='2'><input type="submit" value='ok'></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

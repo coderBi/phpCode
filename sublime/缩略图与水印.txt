@@ -1,0 +1,80 @@
+制作缩略图：
+	1，原图上采样：
+	2，拷贝到缩略图
+	3，修改大小
+	4，使用函数：imagecopyresampled(缩略图画布，原图画布，缩略图上x，缩略图上拷贝区域y，采样区域x，原图采样区域y，拷贝区宽，拷贝区高，采样区宽，采样区高)
+	5，示例代码：
+		$src_file = './xx.jpg';
+		//创建画布
+		$src_image = imagecreatefromjpeg($src_file);
+		$thumb_w = 200;
+		$thumb_h = 200;
+		$thumb_image = imagecreatetruecolor($thumb_w,$thumb_h);
+		//得到缩略图
+		$src_area_x = $src_area_y = 0;
+		$src_area_w = $src_w;
+		$src_area_h = $src_h;
+		$thumb_area_x = $thumb_area_y = 0;
+		$thumb_area_w = $thumb_w;
+		$thumb_area_h = $thumb_h;
+		imagecopyeresampled($thumb_image,$src_iamge,$thumb_area_x,$thumb_area_y,$src_area_x,$src_area_y,,$thumb_area_w,$thumb_area_h,$src_area_w,$src_area_h);
+		//输出缩略图
+		header('content-type:image/jpeg');
+		imagejpeg($thumb_image);
+		image_destroy($src_image);
+		image_destroy($thumb_image);
+等比例缩略图： 为了解决图片可能不是1:1时的失真
+	1，限定范围大小： 例如设定200 * 200，得到的缩略图可能是 200 * 100
+	2，补白：创建固定大小画布 200 * 200，然后将得到的缩略图例如是200*100放到缩略图的中间位置
+	3，示例代码：
+		//计算缩放需要的比例，取较大的缩放比例
+		$src_file = './xx.jpg';
+		//创建画布
+		$src_image = imagecreatefromjpeg($src_file);
+		$thumb_w = 200;
+		$thumb_h = 200;
+		$thumb_image = imagecreatetruecolor($thumb_w,$thumb_h);
+		//设置缩略图背景
+		$bg_color = imagecolorallocate($thumb_image,255,255,255);
+		imagefill($thumb_image,0,0);
+		//得到缩略图
+		//比较宽高的缩放比例
+		if($src_w/$thumb_w > $src_h/$thumb_h){
+			$thumb_area_w = $thumb_w;
+			$thumb_area_h = $src_h/$src_w * $thumb_area_w;
+		} else {
+			$thumb_area_h = $thumb_h;
+			$thumb_area_w = $src_w/$src_h * $thumb_area_h;
+		}
+		//设置矩形区域
+		$src_area_x = $src_area_y = 0;
+		$src_area_w = $src_w;
+		$src_area_h = $src_h;
+		$thumb_area_x = ($thumb_w - $thumb_area_w)/2;
+		$thumb_area_y = ($thumb_h - $thumb_area_h)/2;
+		imagecopyeresampled($thumb_image,$src_iamge,$thumb_area_x,$thumb_area_y,$src_area_x,$src_area_y,,$thumb_area_w,$thumb_area_h,$src_area_w,$src_area_h);
+		//输出缩略图
+		header('content-type:image/jpeg');
+		imagejpeg($thumb_image);
+		image_destroy($src_image);
+		image_destroy($thumb_image);
+
+制作水印：可以防止盗版，因为跟图片是一体的
+	1，从印章采样
+	2，拷贝到待加水印的画布
+	3，合并两个图像
+	4，使用函数：iamgecopymerge(水印画布，源画布，合并位置x，合并位置y，采样x，采样y，采样width，采样height，透明度(0~100,0是完全透明，100完全不透明))
+	5，实例代码：
+		$dst_file  = 'xx.jpg';
+		$stamp_file = 'hh.jpg';
+		$dst_image = imagecreatefromjpeg($dst_file);
+		$stamp_image = imagecreatefromjpeg($stamp_file);
+		//印章位置
+		$dst_x = 0;
+		$dst_y = 0;
+		//印章采集位置
+		$stamp_area_x = 0;
+		$stamp_area_y = 0;
+		$stamp_area_w = $stamp_w;
+		$stamp_area_h = $stamp_h;
+		imagecopymerge($dst_image,$stamp_image,$dst_x,$dst_y,$stamp_area_x,$stamp_area_y,$stamp_area_w,$stamp_area_h,25);

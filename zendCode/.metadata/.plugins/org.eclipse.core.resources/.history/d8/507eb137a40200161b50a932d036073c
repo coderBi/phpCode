@@ -1,0 +1,14 @@
+<?php
+//演示对dom文件的删
+//创建dom对象
+$obj = new DOMDocument();
+//加载指定的xml文件，在内存中形成相应的dom树
+$obj->load("class.xml");
+
+//删除一个节点，删除第三个学生
+$stus=$obj->getElementsByTagName("stu");
+$stu1=$stus->item(2);
+$root->removeChild($stu1);
+
+//更新xml
+$obj->save("class.xml");

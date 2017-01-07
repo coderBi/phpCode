@@ -1,0 +1,312 @@
+﻿mysql数据库：
+	1，分类： 层次数据库  网状数据库  关系数据库
+		a）类似于xml html 文档 一层一层包裹
+		b）目前基本上都是关系型数据库
+	2,SQL:  struct query language 关系数据库的语言标准
+	3，dbms：数据库管理系统，指的是具体的数据库管理软件
+	4，不要手动的去操作数据库文件，任何操作都应该是通过数据库软件进行
+	5，mysql命令：
+		a）启动与停止： net start/stop mysql(需要管理员权限)
+		b）登录: mysql -h服务器地址 -u 登录名 [-p 端口号] -p
+			或者 mysql --host= --user= --port= --password
+		c)设置客户端编码： set names gbk(utf-8);
+		----注意不是数据库文件的编码，而是跟数据库打交道的客户端的编码，一般cmd默认是gbk，php网页里面用的是网页文件本身的编码。所以一般的认为在cmd里面只有一个gbk可用
+		d）备份与恢复：
+			---备份：将一个数据库完整的转换为一个可以随时携带跟传送的文件 mysqldump -h服务器地址 -u -p 数据库名 > 文件名
+			---恢复：将一个备份的数据库文件完整的还原为一个可以使用的数据库文件 mysql -h服务器地址 -u -p 数据库名 < 文件名
+			---这两个命令都是在没有登录时外部使用的，其中mysqldump还需要管理员权限
+			---mysql登录之后还可以利用：source "备份数据完整路径" 进行数据导入
+		e）注释：
+			--单行注释： #  -- （连个杠后面一个空格）
+			--多行注释： /**/
+		f）结束标志： 默认是 ； 但是也可以进行人为的设定
+		 	--- delimiter 新的终结符。 此行之后可以新的
+	 	g）大小写问题： 
+	 		---mysql内部本身不区分大小写
+	 		---但是如果mysql命令生成了新的文件文件夹，可能会区分大小写。例如unix linux 因为系统区分名称大小写所以会区分大小写，但是像windows这样的不区分大小写的系统也就不区分大小写了。
+mysql命名：
+	1，可以命名的： 数据库名 表名 字段名 视图名 函数名 过程名 变量名 用户名等
+	2，可用命名字符： 比一般语言丰富，但是建议跟C 同样命名风格
+	3，非常规字符跟系统关键字可以用来命名，但是最好包在反引号（`）里面
+	4，数据库名 表名 视图名： windows大小写不区分。linux区分
+	5，其他自己顶一个的变量： 都不区分大小写
+	6，建议命名规则： 下划线分割
+数据定义语言（ddl）：
+	1，创建数据库： create database 数据库名 【charset 字符编码】  【collate 排序规则】
+		a）字符编码：设定当前数据库中存储的内容以什么编码进行存储
+		b）collate排序规则： 用于设定当前数据库中存储的字符内容的大小关系。对于英文也就是字符串比较，对于中文一般用其默认排序规则
+		d）show charset 查看所有编码  show collation 查看所有的排序规则。实际应用中我们使用某个字符集可用的与之对应的排序规则一般只有有限的几种（排序规则命名第一个单词是对应的字符集名）
+	2，修改数据库： 一般修改字符编码 排序规则。 但是最好不要在数据库使用过程用去修改编码。
+		a)修改命令： alter database 数据库名 charset 新的编码 collate 新的排序规则
+	3，显示所有数据库： show databases;
+	4，显示一个数据库的创建语句：show create database 数据库名
+	5，删除数据库：drop database 【if exists】 数据库名称 
+		---if exists 用于一种安全运行的考虑。如果没有加上 if exists 如果数据库不存在会进行报错
+	6,选择使用某个数据库： use 数据库名
+	7，创建表：
+		a)形式: create table [if not  exists] 表名（字段列表【，索引或者约束列表】）【表选项列表】 或者 create table [if not  exists] 表名（字段1，字段2...【，索引1，索引2...】）【表选项1，表选项2...】
+		b)字段设定形式： 字段名 类型【字段属性列表】。 字段属性之间用空格隔开
+		c）字段属性
+			auto_increment: 只用于整数类型，通常用于第一个字段，并且通常是主键
+			primary key: 用于设定为主键，意味着可以唯一确定一行数据
+			unique key: 设定值的唯一性
+			not null: 设定该字段不能为空（null）
+			default xx值： 用于设定默认值，如果没有传值，就用此值
+			comment： 字段说明文字
+	8，创建索引：
+		a）索引定义： 索引是系统内部自动维护的隐藏的数据表，里面的数据是自动排好序的，查找速度很快，但是增删更麻烦
+		b）创建索引： 指定一个表的某个或几个字段为索引数据字段就行了： 索引类型（要建立索引的字段名）
+		c）索引类型： 
+			---普通索引： key（字段名）， 没有其他作用，只能加快查找速度
+			---唯一索引： unique key（字段名），不仅可以加快查找速度，还可以设定其字段的值得唯一性
+			---主键索引： primary key（字段名），不仅可以加快速度，而且还有区分一行数据的作用，与唯一性索引相比，唯一性的可以为空，主键不能为空
+			---全文索引： fulltext（字段名）
+			---外键索引： foreign key（字段名1...） references 其他表（其他表中字段名1...）。要注意的是设定表要跟其他表中的字段列表一一对应
+		d）外键： 设定某个表的某个字段，他的数据值必须是在另一个表的摸个字段中存在
+	9，约束： 
+		a)primary key  unique key foreign key。 书写方式跟索引一样。主键约束、唯一约束、外键约束同时也叫主键索引、唯一索引、外键索引。 其实约束与索引是同一件事情的两种不同角度的说法，一个是对某项进行约束，一个是对某项建立索引。（注意：普通索引没有对应的约束）
+		b)非空约束： not null
+		c）默认约束： default xx值
+		d）检查约束： check（某种判断语句） 例如： create table tb1(age tinyint, check(age >= 18))
+		----检查约束是一个通用概念，目前mysql识别check约束，但是具体写入的时候不会进行判断（无用）
+		----默认约束跟非空约束 只能写在字段属性上面
+	10，表选项列表： 表选项就是创建一个表的时候，对该表的整体的设定。
+		a）charset = 要使用的字符编码
+		b）engine = 要使用的存储引擎（表类型）， 存储引擎是将数据存储到硬盘的机制。不同存储引擎在存储速度跟性能有一定区别。主要有： Myisam InnoDB  BDB Memory Archive。存储最快是Archive 最慢的是InnoDB。常用的是InnoDB跟 Myisam，默认是InnoDB（安全，但是不快） 
+		c）auto_increment = 设定当前表的自增长字段的默认初始值，默认是 1
+		d）comment = ‘说明文字’
+	 ---注意：charset如果跟数据库默认设置一样不需要再设置，
+	11，修改表： 修改表属于补救工作，针对一开始设计失误。虽然创建表的工作修改表几乎都可以实现，但是不推荐修改，应该在创建的时候尽量确定表的结构。
+		a)对字段： 添加 删除 修改。
+			添加： alter table 表名 add 【column】 新字段名 字段类型【字段属性列表】 【first：添加到表头，默认是添加到尾部】
+			修改： alter table 表名 change [column] 新字段名 新字段类型【新字段属性列表】 或者 alter table 表名 modify [column] 新字段类型【新字段属性列表】
+			删除： alter table 表名 drop 【column】 字段名
+		b)对索引： 添加 删除
+			添加：alter tabel 表名 add 【unique,primary】 key（字段名1【，字段名2....】）
+			删除：drop index 'index_name' on 'table_name'(column list)或者 alter talbe 'tb_name' drop index|unique|primary key 'index_name'
+		c）对表选项：通常都是修改，即使不给任何值，也会有默认值进行覆盖。 alter table 表名 charset=....
+		d)修改表名： alter table 旧表名 rename 【to】 新表名
+		e)删除表： drop table 【if exists】 表名
+		----注意： 一旦修改了表，再调用 show create table 表名，这是修改的信息会覆盖原有的信息，也就是说没有办法判断出哪些是创建的时候的设定哪些是后来修改的了
+ 	12,其他操作表语句：
+ 	show tables; des 表名（或者 describe 表名）； show create table 表名; rename table 旧表名 to 新表名； 创建一个一样的表（复制表结构）： create table  if not 新表名 exists like 要复制的表名。 复制表的数据到另一个表：insert into 目标表 select* from 源表
+ 	13，视图定义：就是一个select语句，给其去一个名称（视图名），方便以后调用
+ 		a)创建： create view 视图名【（字段名1...）】 as select 语句;
+ 		b)使用： select * from 视图名  limit 0,10;
+ 		c)删除： drop view 视图名
+	14,数据库（表）设计：数据库设计其实也就是指表的相关设置，正常开发中需要一定的经验积累。设计规范一般遵循三范式。
+		a）第一范式（1nf）：原子性，数据不可再分，一个表中的数据（字段值）不可再分。
+		b）第二范式（2nf）：每一行数据具有唯一性（给主键），并且消除部分依赖。通常增加一个自增的id作为唯一的主键就满足了2nf，但是进一步要处理传递依赖（3nf）
+		---依赖性： 如果根据A的值，可以唯一确定B的值，则B对A有依赖
+		---部分依赖： 指的是存在某项的值部分的依赖于主键，可以发现如果主键是单一字段，这个单一字段是可以唯一决定其他字段的。但是如果存在联合主键的情况，设计的时候不应该出现某项值只是依赖于主键中的部分字段，这就是部分依赖问题。
+		---完全依赖： 某个字段依赖于主键的所有字段，如果一个表的字段只有一个字段是主键，那么一定是完全依赖的。
+		c）第三范式（3nf）： 每个字段都独立的依赖于主键字段，而要消除其中部分非主键字段的内部依赖。
+		---通常为了满足三种范式，只需要将每一种数据用一个表进行存储。
+数据操作语言（dml： data manipulation language）:
+	1,插入数据： 
+		a）形式1： insert 【into】 表名(字段列表) values(数值列表),(接着插入的另一项数值列表)。 可以插入多行数据，用逗号隔开。字段名通常不推荐省略，值列表跟前面的字段列表一一对应。如果值是字符串或者时间类型，需要用单引号包裹
+		b）形式2： replace 【into】 表名() values(),()。跟insert into基本一样，区别是如果出现了主键或者唯一键重复就是一个替换操作
+		c）形式3： insert 【into】 表名（...） select ... from ...。 要注意select返回的列表要跟insert的列表一一对应
+		d）形式4：insert 【into】 表名 set 字段名1=值1,字段2=值2 ... 
+	2,载入数据： load data,适用于载入结构整齐的纯文本数据到一个相对应结构的表。
+		a）基本语法形式： load data infile "完整的数据文件路径" into table 表名；
+		b）更复杂的命令可以在操作手册中找到
+	3，删除数据： delete from 表名 【where 条件】【order by 排序】【limit 限定】
+		a）删除数据以行为单位
+		b）删除通常都需要带一定的限制条件，否则可能不小心会删掉所有
+		c）排序用于设定这些数据的删除顺序，通常要跟limit限定一起使用才有意义
+		d）limit 限定删除的行数，通常跟order by 一起使用
+	-------delete 与 truncate区别：delete * from tb where ... 是dml语言，可以回退。truncate tb 是 ddl语言，无法回退，默认删除所有内容，删除速度delete要快。
+	4，修改数据：update 表名 set 字段1=值1,字段2=值2... 【where...】【order by 排序】【limit 限定】
+		a）跟delete一样，一般要跟上一定的限定条件
+		b）where  order by limit 跟delete里面相似
+		b）如果值选项是字符串或者时间类型，要用单引号包裹起来。如果时间或者字符串是mysql内部函数得到的不用考虑单引号的问题
+数据查询语言（dql）：
+	1，基本查询： select 【all】【distinct】字段或者表达式列表 【from子句】【where子句】【group by子句】【having子句】【order by子句】【limit子句】
+	2，字段与表达式:
+		a）字段，依赖于from子句
+		b）表达式类似： 1+2  now（）等其他函数
+		c）每个输出项都可以用as设置一个别名。这样可以改变结果集的字段名
+	3,all 与 distinct：
+		a）all 与 distinct用于设定输出的数据是否消除重复行，all不消除，distinct消除，默认是all的。例如select distinct * from tb1;
+	4，from子句：
+		a)from子句表示数据源，通常后面是表名、视图名等（可联合查询）。如果查询的是字段名则必须来源于这里的数据源，如果是表达式则不用
+		b）where设定筛选条件，例如 select * from tb1 where not(id = 100) and name<>''; 
+		c）is运算符：
+			is null: 值是否为空，也就是没有值
+			is not null: 值不是空
+			is true: 判断某个字段是否是真
+			is false: 判断某个字段是否为假：null 0 o.0
+		d)between and 运算符： 判断数字类型的值是否在某个范围内。等价于 > and < 
+		e)in 运算符： 给定确定范围的判断， in(值1，值2...) 表示字段的值为括号内所列出的值中的一个就满足条件
+		f）like运算符： like ‘%内容%’ 或者 like ‘_内容_’ ，其中%代表任意长度的任意字符,_下划线代表一个任意字符。如果要查找的值包括了%或者_那么里面的相应符号要进行转义。
+	5，group by子句：
+		a）基本形式： group by 字段1（desc|asc）, 字段2（desc|asc）
+		b）group by句子操作的是where筛选之后的结果
+		c）通常只有一个字段，很少2个及以上
+		b）group by 会将多行相应字段相同的归并到一个组来进行显示，因为分组之后其他的数据项显示没有意义了(脏数据)，所以一般select的输出结果一般只显示被分组的字段： select 组1，组2 from tb ... group by 组1，组2...。要想输出每一组的数量，可以调用count(*)。其他聚合信息的函数： max(字段名) min（字段名） avg（字段名） sum（字段名）
+	6，having子句：having的作用跟where一样，只是操作的数据集是分组之后的结果，而where操作的是源数据。要注意的是having里面调用count（）等函数还是操作的原始数据
+	7，order by子句：设定结果的排序
+		a）形式: order by 字段1 【asc|desc】,字段2【】
+	8，limit子句： 限定取出结果的行号范围
+		a）形式： limit 起始行号， 要取出的行数。 取出的结果包含起始行号。如果起始行号不指定默认是从第0行开始的
+	9，select语句注意：
+		a）各种语句的顺序一定，例如 having要放在group by后面
+		b）where依赖于from，即没有from就不能有where
+		c）having依赖于group by，如果没有group by 则默认所有数据被分成一组
+
+	10,连接查询：
+		a)基本概念： 多个表连接起来当做一个数据源,实际效果是将左边的每一行跟右边的每一行分别连接起来，也就是会有 M * N 行
+		b)基本形式： 表1 【连接形式】 join 表2 【on 连接条件】 【连接形式】 join .....
+		c)连接分类： 交叉 内连接 左（外）连接 右（外）连接 全（外）连接
+		d）无条件(交叉)连接：select * from tb1,tb2;或则select * from tb1 join tb2; 或者select * from tb1 cross join tb2;
+		e）内连接: 表1 【inner】 join 表2  on 连接条件。由于inner这个词可以省略，可以发现其实其与交叉连接的区别在后面的 on 条件上。例如 select * from tb1 inner join tb2 on tb1.pro_id = tb2.id。 可以发现最终的行数跟表1相同（如果两个表之间是主外键关系）。
+		f）左（外）连接： left （outer）join ，将两个表内连接结果加上左边表不符合连接条件的数据行，这一行不符合的数据行的同一行的另一个表对应的列的各项都是null
+		f）右（外）连接： right （outer）join ,将两个表内连接结果加上右边表不符合连接条件的数据行，这一行不符合的数据行的同一行的另一个表对应的列的各项都是null
+		f）全（外）连接： 其实是左连接跟右连接的并集。mysql目前不支持全连接的语法
+	11，子查询： 也就是说在一个select语句的内部某个位置又出现了另一个查询语句，内部的语句叫做子查询，外部的叫做主查询。子查询先获得一定的查询结果，然后将结果当做表达式的值供给主查询使用。例如 select * form product where price > (select avg(price) form product)。 select * form (select * from tb1) as tb2(子查询放在from后面必须要加上as) where...。
+	12，表子查询： 通常放在from后面
+	13， 行子查询： 只有一行。通常放在行比较语法后面： where row(字段1，字段2)=（select 行子查询）
+	14,列子查询： 只有一列，当做多个值使用。例如：select c1 from c1 in(select f1 from tb2) (其中子查询得到的是多行一列) 
+	15，标量子查询： 只有一个数值，当做一个数使用。例如 select c1,(select f1 from tb2) from tb1(其中子查询得到的是一个标量，一行一列)
+	16,子查询出现在from后面做源，放在where后面做条件，放在select后面做结果值
+	17,any运算符： id > any(子查询结果多行一列),意味着只要id大于子查询结果的任意一个就满足条件
+	18，id > all(子查询多行一列): 表示要大于所有的结果选项
+	19，some运算符： 跟any一样
+	20，exists子查询： exists(子查询),如果子查询结果有数据返回true否则返回false。例如 select * from product where exists(select * from product_type where protype_name like '%电' and id =prouct.protype_id)，括号里面由于有id =prouct.protype_id的条件，所以子查询没有办法独立存在，其实这里隐含着跟主查询的连接（注意这种隐含不是说没有写出里面的连接语句，而是跟外面的主查询同步进行了。当然也可以理解为里面先得到没有隐含连接条件的查询结果，然后将这个结果集带上相应的连接条件出外层的主查询进行连接查询）
+	--------一般同样的功能，连接查询比子查询高效-----------
+	21，联合查询（union）： 查询语句1 union 【all|distinct】 查询语句2；因为结果集里面第二个语句的结果会排在第一个语句结果集后面，所以每个语句的列数必须要一致，通常为了有意思，相应的字段类型应该具有一致性。值得注意的是 union后面默认是distinct的，也就是会消除最终结果集里面的重复行。最终结果集字段名默认使用第一个语句的。如果后面添加了order by 是对最终结果集进行排序。如果语句最后有order by 前面其他语句就不能出现order by 了否则会报出错误(union时order使用错误),如果对各个语句进行包裹，其中的各自的order by依然不会生效，因为最后会对所有的结果集进行统一的排序。
+	------因为最终的结果集是以第一个语句的字段为准，如果对第一个语句的某个字段进行 alias 最后的 order by 必须要使用其别名，没有办法使用之前的默认字段名
+	-----中文翻译通常将join翻译为“连接”，union翻译为“联合”。但是mysql手册目前将join翻译为“联合”，union没有翻译。-------
+数据控制语言（dcl：data control language）： 对用户及其权限的管理
+	1，用户管理：mysql中的所有用户都存储在系统数据库mysql的user表中。
+		a）创建用户： create user '用户名'@‘登录地址或者服务器’ 【identified by '密码'】。例如 create user 'test'@'%' identified by '123'; mysql内部一个用户被host跟name联合标识，也就是不同的ip可以有相同的name
+		b）删除用户： drop user '用户名'@'允许登陆的ip';
+		c)修改密码：如果修改自己的密码： set password=password('新密码')。如果修改其他人密码：set password for 'user'@'localhost' = password('')
+	2,权限管理：大概30多个权限分类 select update delete....。其中最大的权限是 all 【privileges】
+		a）授权(添加)：grant 权限列表 on 某个库.某个对象 to 'user'@'%' 【identified by '密码'】,如果identified by 没有省略，则会同时进行密码的修改。例如： grant select,insert,update on dbName.tbName(除了表还可以有view、函数名、存储过程名、*) to ..。一般每一个数据库会有一个管理员: grant all on product.* to 'user1'@'localhost' 
+		-------如果授权的用户不存在则会创建一个用户,这个时候不能省略【identified by】--------------
+		b）取消权限：revoke 权限列表 on 数据库.对象 from 'user'@'%'
+数据事务语言（data transaction language)：innodb bdb支持
+	1，事务：保证多条语句执行的一致性，要么多条语句都执行，要么都不执行，也就是让多条语句执行起来的效果是一条语句
+	2，事务的原子性： 要么都做要么都不执行
+	3，事务的一致性：让数据保持逻辑上面的合理，例如商品库少1，客户的购物车要加1
+	4，隔离性：如果多个事务同时执行，每个事务应该像独立执行一样
+	5，持久性：一个事务执行成功，应该是对硬盘上面的数据的更改，而不应该是内存上的
+	6,事务的模式： 指的是是否开启了一条语句就是一个事务的开关。默认是开启状态的，称为‘自动提交模式’。如果关闭了就是“非自动提交模式”。关闭指令： set autocommit=0(false|off)
+	7,人为提交指令： commit，将内存中的数据写到硬盘上面
+	8，事务的执行流程：
+		a）开启： start transaction或者只写一个begin
+		b）执行多条语句
+		c）判断这些语句的执行结果： if(执行正确){commit;}else{rollback;//回滚事务}
+	--------select 操作不影响数据的一致性，所以没必要增加事务处理----------
+字段类型（数据类型）：
+	1.分类： 数值型 字符型 时间型
+	---数值类型： 整数 小数（浮点 定点）
+	2，整数类型： int tinyint smallint mediumint bigint
+		a) int: 4字节
+		b）tinyint： 1字节
+		c）bigint： 8字节
+		d）smallint： 2字节
+		e）mediumint： 3字节
+		f）设定形式： 【（M）】 【unsigned】 【zerofill】
+			---说明：M 表示显示长度，zerofill 左边是否用0填充，如果没有设定 M 会自动将上面最长补0。
+			---note： 如果要求左边补 0 ，默认是unsigned
+			---例子： create table tb(f1 int unsigned, f2 int(10) zerofill)
+	3，小数类型： float double decimal
+		a)float： 单精度浮点，4 字节， 精度6~7有效数字（包括整数与小数）
+		b）double： 双精度， 8字节， 20位左右有效数字
+		c）decimal：定点小数，整数位最长可以达到65，小数位最长可以达到30， 设定格式decimal（总位数，小数位数）
+		---例如如果向float里面添加12345678 由于只有6位有效数字，最终显示的值是12345700， 可以发现后面两位保留不全，进行了进位
+		---decimal内部有自己的存储方式，如果在表示范围内都是可以精确表示的（例如0.1其不是用2进制表示以达到精确表示）
+	4，字符串类型： varchar char enum set text
+		a)varchar: 可变长度字符串，使用时必须设定其长度，最大长度理论值65535，实际上最大只能是65533，考虑到字符编码的不同，也会有进一步的减少，例如如果存储中文，则最多65533/2。设定值表示的是最大值，实际的长度是由内容决定的。 
+		----这里的存储显示其实都来源于一个表格的一行的数据存储的最大容量限制，也就是65535
+		b）char：定长字符串，使用时通常需要设定其长度，如果不设定，默认是 1 ，最大理论长度是255，使用与存储的数据都是可以明确预见固定长度的字符串，例如手机号，身份证号码等。如果少于设定的长度，会自动的向后补全为空格 
+		c）enum：单选项字符串数据类型，适合存储表单中间的单选项值。形式：enum("选项1","选项2" ,...)。实际内部这些字符串对应如下数字值：1,2,3....65535。添加数据的时候可以将值设定为选项值或者数字
+		d）set：多选项字符串数据类型，适合存储表单里面的多选项的值。形式：形式：set("选项1","选项2" ,...)。实际内部对应下列数字：1,2,4,8....2^63。添加数据的时候可以将值设定为选项值或者数字。如果添加的值是数字应该是各项数字相加的和，例如如果要添加数据项1跟数据项2，就添加相应的值为3 或者 “数据项1，数据项2”
+		e）text： 长文本字符串类型，其存储的数据不占据表格中的数据容量限制，其本身最长65535。 其他也不占据表格数据容量的还有 smalltext tinytext longtext
+		f) 其他字符串类型（了解）：
+			--binary：定长二进制字符串类型，里面存储的是二进制值
+			--varbinary：变长的二进制字符串类型
+			--block：二进制数据类型，使用于存图片音频等，但是一般不这么使用
+	5，时间类型： datetime date time  year
+		a)datetime: 时间日期类型
+		b)date: 日期类型
+		c)time: 时间类型
+		d)year: 年份类型
+		f)timestamp: 时间戳类型，值一个时间的“数据值”，本质是一个数字，类似js里面的gettime（）或者php里面的time（），都是得到一个从1970.1.1到现在的差值，跟php里面一个样，这里的单位是秒。它的一个重要作用是会自动获取时间戳，类似now（）,通常不用赋值
+		---赋值的时候要像字符串一样，用引号将值包起来
+		---datetime date time 都可以用now（）直接赋值，系统会自动截取
+	6，bool类型： 本质上其实是tinyint（1），0位false
+
+php操作mysql数据库函数：
+	a) 连接数据库 $link = mysql_connect("数据库服务器地址","用户名","密码")、
+	b）设置连接编码：mysql_query（“set names 网页文件编码名”）
+		----另一种写法：mysql_set_charset("网页编码名")
+	c)选定要使用的数据库： mysql_query(“use 数据库名”)  或者 mysql_select_db("数据库名")
+	d) 执行sql命名：$result = mysql_query("select/delete/update/insert/desc/show tables/drop...")
+	e）query执行结果： 
+		情况1： 如果执行没有返回的语句，例如： inert update delete create table create database drop 等。这种语句执行成功返回true 执行失败返回false
+		情况2：执行有数据返回的语句，例如 select show tables show databases desc 等。这种语句如果执行失败返回false，如果执行成功返回一个结果集。结果集是一个表结构，要取出相应的数据，就对这个结果集进行相应的操作
+	f)显示一个表的结构（分别列出来中间各个字段的定义）
+	g）获取执行失败时的错误信息： mysql_error()， 一般调用之前要先判断是否的确是执行失败了，然后对相应的错误信息进行处理
+	h）mysql_fetch系列函数：
+		--- mysql_fetch_array($result)： 取出结果集中的一行数据并返回一个数组，这个数据的下标有两套：字段名，0开始的连续数据。例如while($res = mysql_fetch_array($result)){ //处理数组$res}。
+	 	---mysql_fetch_assoc(): 跟mysql_fetch_array类似，下标只有字段名称
+	 	---mysql_fetch_row(): 跟mysql_fetch_array类似，下标只有递增的数字
+	 	---结果集是一种资源，不能直接进行echo
+ 	i)其他函数：
+ 		获取结果集行数：$n = mysql_num_rows($res)
+ 		获取结果集列数：$n = mysql_num_fields($res) 
+ 		获取结果集的第 i个字段的名字: $name= mysql_field_name($res)
+ 		mysql连接字符串函数： concat('','');
+ 		mysql_insert_id()：设置最新的插入数据的id
+
+mysql编程：
+	1，mysql编程中的语句块包括符号： 【标识符】 begin .... end 【标识符】; 被二者包裹的部分构成一个语句块。相当于其他语言中间的大括号
+	2，流程控制：
+		a）if 语句块 then....elseif....end if;
+		b) case语句: 相当于其他语言的switch case。形式1： case case_value  when when_value then ...... when...then...else....end case; 形式2: case  when 表达式 then......when 条件表达式.....then....else...end case; 
+		c）loop循环： 标识符： loop ...语句块...leave 标识符（里面控制loop的退出）... end loop 标识符
+		d）while循环： 【标识符】 while 表达式 do ...... end while 【标识符】。示例代码： set @v1 = 1; while @v1 < n do  set @v1 = @v1 + 1(mysql里面没有++ -- +=); end while;
+		f）repeat循环： 【标识符】：repeat ..... until 跳出循环的条件 end repeat 【标识符】；
+		g)leave 标识符： 退出begin end 跟其他的有标识符的结构（loop while repeat）
+	3,变量： 
+		a）普通变量： 不带@符号，定义：declare 变量名 变量类型 【default 默认值】，赋值： set 变量名=值。普通变量只能在“编程环境”中使用。
+		----编程环境包括： 定义函数内  定义存储过程中  定义触发器内-------------
+		b)会话变量： 带@符号，定义（赋值）： set @var = 值；也就是直接赋值，无需定义。会话变量可以随处使用
+		c）变量赋值：
+			针对普通变量： set 变量名=表达式； 普通变量只有用declare定义之后才可以进行赋值
+			针对会话变量： set @var=表达式， select @变量名 ：= 表达式， select 表达式 into @var，前面一个select语句会输出赋值语句作为查询结果，后面一个select 不会输出查询结果
+			-----select into 赋值语句要给多个赋值： select 值1，值2 into 变量1，变量2。------------
+	4，（存储）函数： mysql里面的函数必须要返回一个值
+		a）定义形式： create function 函数名（形参1 类型1，....） returns 返回类型 ......begin return 值（这里的值必须跟设定的返回类型相匹配）....end;
+		b)调用： select func(); set var = func()
+		c）删除函数： drop function 函数名；
+		d）注意： 在函数的内部不可以出现返回结果集的操作语句
+		e）cmd查看所有函数： show function status;
+	5,存储过程： 跟函数相似，只是不能有返回值，本质还是函数
+		a)定义： create procedure 存储过程名(【in|out|inout】形参1 类型1, .....) begin .....这里可以出现有结果集的操作语句.......end;
+		b)调用： call 存储过程名称（实参列表）。
+		c）in 与 out： in可以省略，表示用于传递实参。 out:用于设定变量用于存储过程内部执行的数据。 inout表示这个参数具有双向的作用。out|inout传递进来的必须是变量
+		d）删除： drop procedure 过程名;
+	6，触发器（trigger）： 也是一段预先定义好的代码，不应该进行人为的调用，是在某个表发生某个时间的时候自动触发执行
+		a）定义： create trigger  触发器名称  触发时机  触发事件  on 表名 for each row  begin......end;
+			---触发时机： before | after
+			---触发事件:  insert | update | delete
+			----new：代表当前正要insert | update操作的新行， set @v1 = new.id
+			----old: 代表要 delete 操作的旧行
+	7，note： view function procedure 跟 table同一级 trigger 是table的下一级 。trigger跟function一样，内部不能出现有结果集返回的sql操作语句。
+
+SQL注入：
+	1，所有的sql注入基本都是由于单引号 ‘ 存在数据中被直接读入，产生了语句截断导致的逻辑判断的更改
+	2，常见： str'#   str’-- 这两种是对前面截断并且对后面注释。
+			  str' or 1 or ' 这个语句导致最终可能出现  0 or 1 or '' and 0
+  	3，解决方法：原因是存在歧义的字符的录入引起的，所以只要解决歧义问题就行了。mysql提供了字符串转义的方案: str = mysql_real_escape_string(待转义字符串，数据库连接)。这样对用户的输入进行转义之后在带入sql指令里面。
+  	4，例子： 在mysql工具类里面添加
+  				function escapeString($str){
+  				//这里一般在转义之后的字符串两边加上单引号作为返回，这样在具体的sql指令里面就不必要在去写单引号
+  					return "'".mysql_real_escape_string($str,$this->link)."'";
+  				}
+	5，note： 一般所有的用户输入或者不明数据都要经过转义之后才能进行sql执行

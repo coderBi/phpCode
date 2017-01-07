@@ -1,0 +1,15 @@
+[ 2016-05-29T21:08:28+08:00 ] 127.0.0.1 /sublime/thinkphp/shop/?s=Admin/Goods/showlist
+ERR: SQLSTATE[HY000] [2019] Unknown character set
+
+[ 2016-05-29T21:09:23+08:00 ] 127.0.0.1 /sublime/thinkphp/shop/?s=Admin/Goods/showlist
+ERR: SQLSTATE[HY000] [2002] 由于目标计算机积极拒绝，无法连接。
+
+
+[ 2016-05-29T21:09:32+08:00 ] 127.0.0.1 /sublime/thinkphp/shop/?s=Admin/Goods/showlist
+ERR: SQLSTATE[HY000] [2002] 由于目标计算机积极拒绝，无法连接。
+
+
+[ 2016-05-29T21:10:33+08:00 ] 127.0.0.1 /sublime/thinkphp/shop/?s=Admin/Goods/showlist
+ERR: 1146:Table 'learn_mysql.sw_goods' doesn't exist
+ [ SQL璇彞 ] : SHOW COLUMNS FROM `sw_goods`
+

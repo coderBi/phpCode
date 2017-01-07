@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ajax 大附件进度条设置</title>
+	<style>
+		#progressOut {
+			width: 500px;
+			height: 20px;
+			background-color: white;
+			border: 1px solid silver;
+			visibility: hidden;
+		}
+		#progressIn {
+			width: 0%;
+			height: 20px;
+			background-color: green;
+		}
+	</style>
+	<script>
+		window.onload = function(){
+			var fm = document.getElementsByTagName('form')[0];
+			fm.onsubmit = function(event){
+				//利用formdata快去采集到form表单里面的数据
+				var fd = new FormData(fm);
+
+				var xhr = new XMLHttpRequest();
+				//给ajax设置onprogress事件
+				xhr.upload.onprogress = function(event){
+					var per = Math.floor(event.loaded / event.total * 100) + "%";
+					var prgsout = document.getElementById('progressOut');
+					var prgsin = document.getElementById('progressIn');
+					prgsin.style.width = per;
+					//如果已经上传100% 输出上传成功，隐藏进度条
+					if(per == "100%"){
+						prgsout.style.visibility = "hidden";
+						document.getElementById('uploadsuccess').innerHTML="上传成功";
+					} else {
+						prgsout.style.visibility = "visible";
+						document.getElementById('uploadsuccess').innerHTML="上传中...";
+					}
+				}
+
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState == 4){
+						document.getElementById('result').innerHTML=xhr.responseText;
+					}
+				}
+				xhr.open('post','./login.php');
+				xhr.send(fd);
+
+				//阻止onsubmit的默认操作
+				event.preventDefault(); //也可以是returnfalse
+			}
+		}
+	</script>
+</head>
+<body>
+	<form action="" enctype="multipart/form-data" method="post">
+		<input type="file" name='userpic'>
+		<input type="submit" value='上传'>
+	</form>
+	<div id="progressOut"><div id="progressIn"></div></div>
+	<div id='uploadsuccess'></div>
+	<div id="result"></div>
+</body>
+</html>

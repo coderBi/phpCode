@@ -1,0 +1,53 @@
+*******************************************
+ini_set("数据项"，值）：设定ini某一个数据项
+ini_get("数据项"): 得到ini数据项值
+*******************************************
+错误处理：
+	1，错误分类： 语法错误  运行时错误 逻辑错误
+		a）语法错误：运行前由系统检查
+		b）运行时错误： 提示性错误  警告性错误  致命错误
+		c）逻辑错误：程序本身可以正常执行，无报错。但计算结果
+			错误
+	2，错误分级：每一级有自己的代号（常量）
+		系统常见错误：
+			a)E_ERROR：致命错误（必须马上解决） 1   例如调用了一个不存在的函数
+			b)E_WARNING：警告错误 	2  例如载入了一个不存在的文件
+			c)E_NOTICE： 提示性错误 8  例如使用了未定义的变常量
+			--E_PARSE: 语法错误 4
+		用户自定义错误：
+			a)E_USER_ERROR
+			b)E_USER_WARNING
+			c)E_USER_NOTICE  1024
+		其他：
+		E_STRICT: 严谨性语法检查错误
+		E_ALL: 代表所有错误
+	3，自定义触发错误：程序员根据业务的需要，主动创造一个错误
+		例如： trigger_error(“出错啦”，E_USER_ERROR)
+	4,控制错误显示:
+		a)在php.ini中间配置 ini_set("display_errors",0) 不显示
+							ini_set("display_errors",1) 显示
+		b)在脚本中设置相应页面的显示方式： ini_set()这种方式高于ini配置文件中的设置
+	5，控制错误显示那些级别： error_reporting
+		a)在ini文件里面设置： 开发阶段 error_reporting = E_ALL  发布阶段  error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT (注意的是php5.3及之前是E_ALL |E_STRICT真是代表所有的错误)
+		b)在脚本文件里面设置： ini_set("error_reporting", E_ALL)
+	6，关于错误日志：
+		a）控制是否记录： log_errors
+			--php.ini中： log_errors = on 或者 off
+			--脚本文件： ini_set("log_errors", 1或者true)
+		b)指定日志文件名: error_log
+			--ini_set("error_log", "文件名"): 系统会自动在文件夹下面创建这个文件，并且将错误打印到这个文件里面
+			--使用一个特殊的文件名称"syslog" 此时错误会被打印到操作系统的错误日志里面。例如如果是windows系统可以在windows的系统日志里面查看到php的错误
+
+	7，自定义错误处理器：
+		步骤1： set_error_handler("自己的处理错误函数名称")
+		步骤2： 定义自己的处理函数 func($errCode,$errMsg,$errFile,$errLine)。 函数会被系统自动的调用，并且4 个参数自动传入
+		--注意： E_ERROR 是致命错误，自定义错误处理也无法处理掉
+
+异常： 区别于php标准错误，是php在处理面向对象程序时的处理机制
+	1，概念：错误对象，即是异常。是错误在面向对象里面的体现
+	2，异常的处理: 
+		a) 类的使用者：检测某段代码是否存在异常，如果出现了异常，选择处理方案。try{//监视的代码} catch(){//捕获到进行处理}
+		b）类的定义者： throw 出异常。 function {if(xx) throw new Exception('错误消息' 【,错误代码】)}
+	3，note：异常一旦没有被捕获，就会触发一个致命错误
+	4，异常对象： 异常类的实例化对象
+	5，异常类： Exception（php中异常类），及其后代类（例如PDOException、RuntimeException）。

@@ -1,0 +1,33 @@
+create table student(id int auto_increment primary key,name varchar(10) unique key,gender enum('男','女'),provence varchar(10),college_id int);
+
+insert into student(name,gender,provence,college_id) values('罗地华','男','江西',1),('韩顺平','男','四川',2),('吴英磊','男','黑龙江',1),('王玉红','女','河北',3),('赵玉川','男','河北',3),('刘兆英','女','江西',1);
+
+create table college(id int auto_increment primary key,name varchar(20) unique key, address varchar(50),phone varchar(20));
+
+insert into college(name,address,phone)values('计算机系','行政楼302','010-666666'),('数学系','科研楼108','010-7777777'),('物理系','行政楼305','010-88888');
+
+select s.* from student as s inner join college as c on s.college_id=c.id where c.name='计算机系';
+
+select c.* from student as s inner join college as c on s.college_id=c.id where s.name='韩顺平';
+
+select name from college where address like '行政楼%';
+
+select gender, count(*) from student group by  gender;
+
+select c.* from student as s inner join college as c on s.college_id=c.id group by c.id order by count(*) desc limit 1;
+
+select c.* from student as s inner join college as c on s.college_id=c.id group by c.id order by count(*) desc limit 1;
+
+create view v1(id) as select c.id from student as s inner join college as c on s.college_id=c.id group by c.id order by count(*) desc limit 1;
+
+select gender,count(*) as 人数 from student inner join v1 on college_id=v1.id group by gender;
+
+create view v2(provence) as select s.provence from student as s where s.name = '罗地华';
+select  student.*  from student inner join v2 on student.provence=v2.provence;
+
+select c.* from student as s inner join college as c on s.college_id=c.id where s.provence='河北' group by c.id;
+
+select c.* from student as s inner join college as c on s.college_id=c.id where s.provence='河北' group by c.id;
+
+create view v3 as select college_id from student where provence='河北' and gender='女' group by college_id;
+select student.* from student inner join v3 on student.college_id=v3.college_id;

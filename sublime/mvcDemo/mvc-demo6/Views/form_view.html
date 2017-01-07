@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>添加新用户</title>
+</head>
+<body>
+	<form action="?c=User&a=AddUser" method='post'>
+		<table>
+			<tr><td colspan='2'>添加数据：</td></tr>
+			<tr>
+				<td>用户名</td>
+				<td>
+					<input type="text" name='name'>
+				</td>
+			</tr>
+			<tr>
+				<td>密码</td>
+				<td>
+					<input type="password" name='password'>
+				</td>
+			</tr>
+			<tr>
+				<td>年龄</td>
+				<td>
+					<input type="text" name='age'>
+				</td>
+			</tr>
+			<tr>
+				<td>学历</td>
+				<td>
+					<select name="xueli">
+						<option value="0">请选择学历</option>
+						<option value="1">中学</option>
+						<option value="2">大学</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>兴趣</td>
+				<td>
+					<label><input type="checkbox" name='fav[]' value='1'>排球</label>
+					<label><input type="checkbox" name='fav[]' value='2'>篮球</label>
+					<label><input type="checkbox" name='fav[]' value='4'>地球</label>
+				</td>
+			</tr>
+			<tr>
+				<td>来自</td>
+				<td>
+					<label><input type="radio" name="aspect" value='1'>东北</label>
+					<label><input type="radio" name="aspect" value='2'>华北</label>
+					<label><input type="radio" name="aspect" value='3'>西北</label>
+					<label><input type="radio" name="aspect" value='4'>华东</label>
+					<label><input type="radio" name="aspect" value='5'>华南</label>
+					<label><input type="radio" name="aspect" value='6'>华西</label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan='2'><input type="submit" value='ok'></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>

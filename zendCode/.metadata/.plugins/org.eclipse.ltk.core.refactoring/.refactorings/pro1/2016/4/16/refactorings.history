@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;pro1/Copy of phpdom2.php&apos; to &apos;phpdom2.php&apos;" description="Rename resource &apos;Copy of phpdom2.php&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Copy of phpdom2.php" name="phpdom2.php" stamp="1460679842672" updateReferences="true"/>
+</session>

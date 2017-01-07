@@ -1,0 +1,8 @@
+<?php
+//创建dom对象
+$obj = new DOMDocument();
+//加载指定的xml文件，在内存中形成相应的dom树
+$obj->load("class.xml");
+//获取第一个学生的名字
+$stus=$obj->getElementsByTagName("学生");
+echo "共有".$stus->length;

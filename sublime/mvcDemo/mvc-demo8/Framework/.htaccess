@@ -1,0 +1,5 @@
+Options Indexes
+#Order Deny,Allow
+#Allow from all
+require all denied
+DirectoryIndex index.php

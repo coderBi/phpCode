@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--引入dtd-->
+<!--
+<!DOCTYPE 班级 [
+<!ELEMENT 班级	(stu)>
+<!ELEMENT stu	(name)>
+<!ELEMENT name	(#PCDATA)>
+]>
+-->
+<!DOCTYPE 班级[
+<!ENTITY insss "实体">
+] SYSTEM "classes.dtd">
+<班级>
+<stu 住址="xx">
+<name>孙悟空</name>
+<sex>男</sex>
+</stu>
+<stu 住址="xx">
+<name>孙悟空</name>
+<sex>&insss;</sex>
+</stu>
+</班级>

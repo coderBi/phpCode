@@ -1,0 +1,421 @@
+﻿面向对象编程思想： oop: object oriented programming
+	1，面向过程编程：将一个任务分割成多个步骤，然后一步一步执行
+	2，面向对象： 将要完成的任务分派给不同的对象去操作： 对象1操作1 .....对象2操作2....各个对象协调完成工作
+	3，类： 对象的描述
+		---属性： 类中变量，包括普通（实例）属性与静态属性
+		---方法： 类中函数,要使用属性可以用this。包括普通（实例）方法，静态方法，构造方法，析构方法
+		---常量：在类中定义的常量，本质上还是常量: const 常量名=常量值，类中的常量定义不可以使用define（），使用的时候需要 类名：：常量名
+		---注意： 类里面直接对属性赋值时，属性的值只能是直接值或者简单的，不能是复杂的表达式，例如class A{ $var = new stdclass()}不可行
+	4，创建对象：
+		a）new 类名（）
+		b）new 变量名（）。变量名的值是类名
+		c）在内部创建一个本类型对象： new self（）
+		d）::getNew(): 得到静态的内部对象
+		e）$o1 = new cl(), $o2 = new o1: 创建的o2 是 o1 描述的一个对象
+	5，对象传递： php里面的对象都是引用传递，也就是$o2 = $o1 跟 $o2 = &$o1 是同一个效果。原因是php里面的对象变量存储的是一个对象的编号： $o --> #1(系统分配的编号，不能人为操作) --> new 出来的对象。所以如果进行值传递也就是会导致两个对象变量存储一个相同的对象编号。
+	6,普通属性： instance（对象）的属性，是一个可以在实例化的对象上使用的属性
+		a）定义形式： class{ 【var|public】 $属性名=初始值 |  【var|public】 $属性名；（无初值）}
+		b）使用： $对象->属性名。 属性的本质就是变量
+	7，静态属性： 变量属于类
+		a）定义： static 【public】 var $属性名 【=初始值】
+		b）使用： 类型::$静态属性名（注意静态引用有$ 符 普通属性调用不需要 $）
+		-----静态变量没有办法在字符串里面用self::$var 直接进行引用，会出现不识别问题。因为作为一个整体其$符号不在最前面（不像$this->var）----------
+	8,普通（| 实例）方法：所有对象都有一个自己的方法
+		a）定义：【public】 function 方法名(){}
+		b) 调用： $d对象名->方法名（）
+	9，静态方法：属于类。
+		a）定义： static function 方法名（）{}
+		b 调用： 类名:: 函数名（）
+	-----$this 代表当前对象， self 代表本类---------------
+	10，构造方法(___construct)： 名字是固定的：__construct。这个方法在对象实例化的时候由系统进行调用。主要用来在实例化对象的时候对属性进行初始化工作。如果没有定义自己的构造方法，会自动继承父类的
+	11,析构方法(__destruct)： 对象销毁的时候（之前）系统调用，析构方法不能带任何参数。可以用来释放外部资源链接（例如数据库连接）
+
+对象的销毁时机：
+	1，程序结束等超出生存期时给系统销毁
+	2，一个对象没有任何指向的时候会被销毁，例如调用unset()解除连接
+	----分析：$v1 = new o(); $v2 = & $v1; $v1 = 10;会销毁？
+	----结果： new出来的对象会被销毁，原因是 v1 v2指向同一片区域，由于 $v1 = 10改变了这一片区域的内容，让其不具有指向原来对象的能力，故对象会被销毁。
+继承：
+	1，概念： 类A的特性信息传递给类B，称为B继承A或者A派生出B
+	2，形式：A extend B{}。 php里面只有单继承，没有多继承
+访问权限：
+	1，形式： class {public|protecte|private 方法或者属性}
+	2， 	 	public 			protected  				private
+		类内	 y					y						y
+		继承类	 y					y						n
+		类外	 y					n 						n
+	------常量const 前面不能有static 或者权限修饰符-------------
+	3，php默认是public
+parent关键词：在子类里面代表父类
+	1，使用形式： parent::属性|方法，这里的方法可以是实例的。如果在子类字面调用了parent::实例方法其实隐含一个对象的传递，也就是将子类类型变成父类类型进行调用
+构造方法与析构方法的调用：
+	1，如果子类无构造 | 析构方法，就调用父类的，否则不调用父类的
+	2，可以在子类中手动调用父类构造 | 析构方法: parent::构造|析构（）
+覆盖（重写：override）：子类重写父类继承的属性或者方法
+	1，子类覆盖的属性 | 方法 访问权限不能低于父类中的被覆盖的属性 | 方法访问权限
+	2，父类中private的方法或属性不存在覆盖。但是子类不能存在相同名称的函数
+	3，子类中的同名方法的参数要求跟父类保持一致。但是构造方法可以参数不一致。
+最终类： 不能再继承了
+	a）形式： final class cls{}
+	b) 作用： 防止其他调用者的修改
+最终方法： 不能再被重写  class 类名{ final function 方法}
+
+抽象类： 不能实例化对象的类
+	a)定义： abstract class{}
+	b)作用：方便技术管理，只做设计，由继承的类去做具体的实现。
+	-----如果有抽象方法，类必须申明为abstract的---------------
+抽象方法： 只有方法头，没有方法体的函数。 abstract function method()；（'；'不可省略）。没有函数体，必须由继承的函数去实现。也就是说抽象方法是用来规范继承的子类中间必须要具体完成的函数功能。
+	------不可以用abstract函数去重写父类函数，否则出现重定义的错误-----------------------
+
+设计模式： 解决某个问题的一般性代码经验总结
+	1，工厂模式： 
+		a）概念： 根据传递进来的类，生产出对应类的对象。
+	3，单例设计模式：
+		a）概念： 一个类只能生成一个实例（对象）
+php中重载（overloading）：
+	1，在其他语言中的重载概念：多个名称相同形参不同的函数
+	2，在php中重载的概念：指的是当一个对象使用其未定义的属性或方法的时候，其中的一些”处理机制“
+	3，属性重载： 针对一个对象不存在的属性操作时调用预先设定号的方法。对属性的操作包括：取值，赋值，判断（isset），销毁（unset）
+		a）取值：对不存在属性取值： __GET() || __get() （类名方法名不区分大小写）
+		b）赋值： __set()
+		c）isset：__isset()
+		d）unset：__unset()
+	4,属性重载的处理函数称为“魔术方法”：
+		a）__get($属性名)：方法可以带一个形参，表示取值的属性的名称。里面可以返回一个自己想返回的值
+		b）__set（$属性名, 值）： 参数是设定的参数名称，以及要设定的值。一般如果要扩展属性，可以在类里面预设一个数组，在这里进行键值对的保存： $arr[$属性名] = 值。 然后可以在__get()的时候返回相应的值
+		c）__isset($属性名): 如果在__set()里面做过相关变量的保存，这可以返回isset(保存数组对应项)
+		d）__unset($属性名): 可以销毁属性列表的某个单元: unset(属性列表对应项)
+	5，方法重载：  处理的方必须要带两个参数：函数名跟参数列表【数组】
+		a）实例方法：调用function __call(方法名，参数列表)
+		b）静态方法：调用static function__callstatic(方法名，参数列表) 
+		----利用方法重载可以使实现像其他语言一样的重载效果---------
+接口： 只能放抽象方法跟常量的抽象类（注意连static 变量都不能使用）
+	1,形式：interface 接口名{常量列表，抽象方法列表}，接口中的不应该出现权限修饰（都是public的）跟abstract（默认已经写了）
+	2，作用： 跟java一样，为了弥补没有多继承的特性。可以实现多个接口
+	3，引用： 类 implements 接口1,接口2  接口1 extends 接口2。
+附加点：
+	1，对于类中间的静态变量或者方法也可以通过其实例化的对象进行访问： 对象：：静态属性或者方法或者常量。
+类的自动加载： 当某行代码使用一个类，php的内部机制可以自动加载这个类的文件
+	1，使用类的情形： new（）  使用静态方法  继承这个类
+	2，使用形式： __autoload($需要的类名){require 语句}。一般将所有类放到一个文件夹下面进行管理，习惯上类文件的命名是：类名.class.php 以方便进行使用。
+	3，自定义自动加载函数： __autoload()是系统内部的，也可以进行自定义的函数用来实现加载：spl_auto_register("自定义的加载函数名称")。这样可以定义多个不同的加载函数实现不同的加载需求（例如不同开发者存放类的文件位置会有区别）。例如 sql_atuo_register('method1'); function method1($class_name){$file = './lib/'.$class_name.'.class.php'; if(file_exists($file)){require_once($file)} }
+对象的复制： 一般形式的传递做不到复制，需要克隆一个再传递
+	1，形式： $o2 = clone $obj1; 克隆一个一模一样的对象并且传递给$o2
+	2，深clone： 一个对象可能有属性本身也是对象，这个时候就需要进行深克隆了。php里面是浅克隆，要实现深克隆可以在__clone函数里面: $this->obj = clone $this->obj;
+对象的遍历： 同数组遍历相似
+	1，形式： foreach($对象 as $key=>$value){}： key是属性名，value是值。这种发方法只能遍历出来有访问权限的的属性（例如private就不能访问）并且不能访问static
+php内置标准类： php语言内部的一些列现成类中的一部分：内置标准类
+	1，形式： new stdclass(): 结果是 object(stdclass)#1(0)
+	2，作用：用于存储一些临时的简单数据（对于标准类本身需要处理为未定义的属性）和对象的类型转换
+对象的类型转换：其他类型转对象类型，类名是stdclass
+	1，null --> 对象： 空对象
+	2，数组 --> 对象： 数组key当属性值。注意数字下标的数组转换了之后依然没有办法利用$this-> 或者类名：：的方式来进行相关引用
+	3，标量 --> 对象：属性名固定是 ‘scalar’，值是该标量
+php里面的类型约束： php本身属于弱类型，只支持局部的部分类型约束
+	1,说明：只支持在函数的形参上设定类型约束。例如 function 方法名（int $var）{}
+	2，能够用来进行类型约束的的类型： 
+		a）数组： array
+		b）对象：类名
+		c）接口：使用接口的名称，传递过来的实参必须是实现了该接口的对象
+		d）函数：function，规定只能传递函数类型，php5.4之后才进行支持
+		----标量类型没有办法做约束---------------------------------
+防止克隆：  例如单例这样的对象要防止对其进行克隆
+	1）思路：如果类中间有魔术方法： __clone()。在进行对象的克隆的时候会自动调用这个函数。通过将这个函数私有化就防止了克隆的正常进行： private function __clone() {}
+序列化与反序列化：
+	1，序列化： 将一个变量的内容转化为字符串存到硬盘上。$v2 = serialize($v1): 将任何类型数据转换成字符串。 file_put_contents('本地文件名',$v2): 将变量放大本地文件中
+	2，反序列化：将序列化之后的字符串数据恢复称为原来的内存数据形式。 $s1 = file_get_contents('本地文件名')： 从文件中读出其所有内容。 $v1 = unserialize($s1)： 反序列化
+对象的反序列化： 
+	1，对于对象的反序列化，需要在反序列化的地方能够识别相应的类名（比如加入类的定义文件）。否则类名会成为一个php里面的默认名称，而原来的类名由于不识别成为了这个默认类名下面的一个属性
+	2，对象序列化会自动调用魔术方法（如果定义了）__sleep()。 对象反序列化会自动调用__wakeup()。例如 __sleep(){return arrary('p1','p2')}：只有属性名为p1,p2的会被序列化； 在__wakeup()里面一般处理没有序列化的属性，例如这个属性要从数据库里面读进来之类的
+	-------------------static属于类，不能被序列化------------------------------
+__tostring（）魔术方法： 
+	1，概念：对象当做字符串使用的时候调用，如果没有定义这个方法没有办法当做字符串使用。这个方法可以返回处理之后要返回的字符串的内容
+	2,例子： __tostring(){return $this->p1.$this->p2;}
+__invoke(): 将对象当函数调用时调用。 不推荐使用
+
+与类有关的魔术常量：
+	1，__CLASS__： 当前类名
+	2，__METHOD__: 当前函数名： 得到结果： 类名：：函数名
+	-------------__METHOD__得到的结果是 类名::函数名， 而__FUNCTION__得到的是：函数名 -------------------
+与类相关函数：
+	1，class_exists($类名): 
+	2, interface_exists（$类名）
+	3,get_class($obj): 得到对象所属的类名
+	4,get_class_methods($类名): 得到类所有方法名称名的数组
+	5,get_class_vars($类名): 得到一个数组，存的类的属性名称跟默认值的键值对（只能得到当前有访问权限的）
+	6,get_declared_classes(): 获得“整个系统”定义的所有类的名称
+	7，get_called_class(): 得到调用的类名： A::func  B::func
+	8, get_parent_class('类名')： 得到一个类的父类名。如果为空就可以判断是顶层类
+	9，Method_exists(对象，方法名)
+	10，Property_exists()
+	11，Interface_exists(接口名)
+与对象有关的系统函数：
+	1，is_object($obj):
+	2, get_object_vars($obj):得到一个对象的所有属性与值构成键值对的数组（只能得到当前有访问权限的）
+与类有关的运算符：
+	1，new $classname()
+	2，$obj instanceof $classname： 判断是否是某个类（包括继承的也算是）的实例
+	3，instanceof 也可以用函数 is_a($obj,'类名')实现 
+static关键字：
+	1，可以像self一样代表当前类，访问静态的属性或方法。但是self使用在当前这个类定义里面，而static代表当前调用这个方法的类（调用类也可能是子类，这样static代表的是子类，而self永远都代表所在位置的类）。也就是说self注重位置 判断，static注重逻辑判断
+
+php里面相面对象的3特征:
+	1,封装：尽可能将一个类的成员私有化，只开放必不可少的属性跟方法。设计原则是能private就不protected，能protected就不 public
+	2，继承: 实现代码重用
+	3，多态： 多种形态
+		a）不同对象使用相同方法，表现不同结果
+		b）同一个对象，使用相同的方法，也可能会有不同结构（方法重载）
+
+mvc编程思想：
+	1，项目开发流程：
+		a）需求调研：需求说明书，一般由项目经理书写
+		b）软件设计： 详细设计说明书（后续的技术指导文档，也是开发参考的主要文档），一般由项目于经理书写
+		c）界面设计： 设计效果图，由界面工程师（UI）设计（ps、fw....）
+		d）静态网页制作： 设计静态网页，由前端工程师（html css js）设计
+		e）动态网页开发： 程序员（软件工程师）开发，实现基本可用的软件初级产品
+		f）测试： 测试工程师负责，经过与开发团队的反复协调，最终生成符合需求的产品
+		g)上线运营： 运营团队，可能挖掘新需求
+	2，显示与逻辑分离：
+		a）形式： <?php 代码 ?> <html> html代码</html>。 php负责数据的计算，html负责数据的显示
+	3，模板技术： 根据相关需求可以载入不同的html文件，而数据计算的php'部分不需要进行大的改动
+	4，mvc原理：
+		a）c：controller，控制获取什么数据以及在哪里显示数据
+		b）m：model，只进行数据的生成
+		c）v：view，只进行数据的显示，是“伪”html代码（里面存在简单的php代码）
+		d）三者关系： 用户（只）向控制器发送请求，控制器（先）调用模型获取数据，（然后）调用view显示数据。view跟model都不直接接受请求。
+	5,模型层（model）的典型实现：
+		a）作用：处理数据的存储操作，比如表的增删查改。根据控制器的要求返回合适的数据。有时候需要控制器传递过来一些数据才能得到结果
+		b）典型代码模式： 
+			class 模型类名 {
+				function 方法1 {}
+				function 方法2 {}
+				function 方法3 {}
+			}  每个方法都是获取某种数据，有的方法可能需要参数。
+		c) 控制器中调用模型层获取数据的典型做法：
+			require '模型层文件';
+			$obj = new 模型类（）；
+			$data = $obj->获取数据的方法
+		d)基础模型类：用来提炼模型类中间各个函数的共同部分。如果多个模型类提炼出来的共同部分（例如连接数据库）是相同的就应该建立一个基础模型类，然后让各个模型类继承它
+		e）实现模型类的单例--单例工厂：
+				class ModelFactory{
+					static $all_model = array();
+					static function M($model_name){
+						if(!array_key_exists($model_name, static::$all_model) || !(static::$all_model[$model_name] instanceof $model_name)){
+							static::$all_model[$model_name] = new $model_name();
+						}
+						return static::$all_model[$model_name];
+					}
+				}
+		f）dao： data access object
+	6，控制器类的常规做法： 一个控制器就是一个类，一个控制器就只包含一些方法，这些方法被称为“动作”，每个方法对应了网页上的一个请求。习惯上所有的动作名称都以“Action”结尾。习惯上，在请求的时候action=xxx会被简写成 a=xxx
+	7,基础控制器类：一个项目中，多个控制器常常有一些共同的方法需求：例如设定编码，一个网站通常使用一种相对固定的编码，这个可以进行统一的设置。又如页面的简短消息（提示文字）的显示以及跳转的功能也算是常见的通用功能
+	---------控制器一般按功能进行划分，而模型类一般按照表来进行划分-------------------
+	8，视图层的典型做法：
+		a）功能：展示页面的静态内容，以及相关的变量数据
+		b）数据： 普通变量，数组，对象数据
+	9，请求分发器（前端控制器）： 所有的连接跟跳转都将请求发送到分发器（index.php），每次请求带上实际需要的控制器名称跟动作名称，分发器通过传过来的 c 跟 a 决定实际的控制器跟动作。其他的每个控制器里面只剩下控制器类的定义
+		a）形式： $c = !empty($_GET['c']) ? $_GET['c'] : '默认控制器名';
+				  $a = !empty($_GET['a']) ? $_GET['a'] : 'index';
+				 require_once './ModelFactory.class.php';
+				 require_once './BaseController.class.php';
+				 require_once './{$c}Model.class.php';
+				 require_once './{$c}Controller.class.php';
+				  $c .= "Controller", $a .= "Action";
+				  $ctrl = new $c();
+				  $ctrl->$a();
+    10,目录接口的设定：
+    	a）通常设定： mvc项目：
+    					index
+    					Controllers
+    						xxxController.class.php
+    					Models
+    						xxxModel.class.php
+    					Views
+    						xxxView.html
+    						xx.html
+    					Framework
+    						MysqlDB.class.php
+    						BaseController.class.php
+    						BaseMdel.class.php
+    						ModelFactory.class.php
+	11，平台：m(module) c a  或者  p(platform)  c  a 对一个网站群的更大范围的划分，一个网站几乎总是分为前台跟后台
+		a) 前台：
+		b）后台：
+		c）合作伙伴平台：
+		......
+		-----平台（platform）在目录结构中一般取名Application-------
+		d）应用中所有的模型一般都会用到： 基础模型类，基础控制器类，数据库操作类等。多个应用构成mvc框架下面的独立“站点”。
+		e）形式： mvc项目：
+    					index
+    					Framework  //所有公共的基础部分
+    						MysqlDB.class.php
+    						BaseController.class.php
+    						BaseMdel.class.php
+    						ModelFactory.class.php
+						Application  //所有平台的总目录
+							front	//前台
+								Controllers
+		    						xxxController.class.php
+		    					Models
+		    						xxxModel.class.php
+		    					Views
+		    						xxxView.html
+		    						xx.html
+							back	//后台
+							partner		//合作平台
+	12,基础常量的设定： 
+		a）define('PLAT', $p); //当前平台名
+		b）define("DS", DIRECTORY_SEPARATOR); //目录分隔符，DERECTORY_SEPARATOR只有两个， \ /
+		c）define('ROOT', __DIR__.DS);
+		d）define("APP", ROOT.'Application'.DS); //application根目录
+		e）define('FRAMEWORK', ROOT.'Framework'.DS); //框架基础类所在路径
+		f）define('PLAT_PATH', APP.PLAT.DS); //当前平台路径
+		g）define('CTRL_PATH', PLAT_PATH."Controllers".DS); //当前控制器目录
+		h）define('MODEL_PATH', PLAT_PATH."Models".DS); //当前控制器目录
+		i）define('VIEW_PATH', PLAT_PATH."Views".DS); //当前控制器目录
+	13, 自动加载类： controller framework。 不能自动加载视图文件
+		a）示例代码
+			//自动加载
+			function __autoload($class){
+				$base_class = array('mysql_tools','ModelFactory','BaseModel','BaseController');
+				if (in_array($class, $base_class)) {
+					require FRAMEWORK.$class.'.class.php';
+				} elseif (substr($class,-5) == 'Model') {
+					//最后5个字符是Model的文件
+					require MODEL_PATH.$class.'.class.php';
+				} elseif (substr($class,-10) == 'Controller') {
+					//最后10个字符是Controller的文件
+					require CTRL_PATH.$class.'.class.php';
+				}
+			}
+	14，禁止其他目录中文件的直接访问： 在framework跟application目录下面都添加 .htaccess文件，在里面可以添加 require all denied
+	15，css 图片 js存放： 浏览器请求得到之后，在浏览器端进行解析执行。一般建立独立的目录（public）对这些资源进行存放
+	-------可以被浏览器直接请求的资源：图片资源、css、js。 不可以直接请求资源： 需要在浏览器端执行之后返回，不可以直接发给用户的资源，例如视图 --------------------------------
+
+PDO（php data object）对象：  高版本php会逐渐移除mysql扩展，直接使用pdo
+	1，概念： pdo是他人写的数据库操作工具类，可以直接用来进行数据库的相关操作，其可以用来操作mssql mysql oracle 等数据库，要操作某种数据库就到php.ini中打开相应的模块
+	2，使用： $pdo = new PDO(连接信息)
+			  $sql = "select * form ...."
+			  $result = $pdo->query($sql); //返回一个结果对象（包裹结果集）
+			  $sql = "delete / update /insert"
+			  $result = $pdo->exec($sql)  //返回一个受语句执行影响的数量，执行失败返回false
+	    ----------具体可以参考php->数据库扩展->数据库抽象层-pdo-----------
+    3，代码：  $DSN（data source name） = 'mysql: host=127.0.0.1;port=80;dbname=';
+    		   $Opt(数据库选项，指的是连接数据库之后的初始化工作) = array(PDO:MYSQL_ATTR_INIT_COMMAND=>'set names=utf8');
+    		   $pdo = new PDO(DSN,用户名，密码，$Opt（Options）) //如果new成功返回对象结果集，失败返回false
+    		   $result = $pdo->exec();
+    		   $pdo = null; //销毁对象
+    4，其他操纵：
+    	$pdo->lastInsertId(): 最后插入的id
+    	$pdo->beginTransaction(): 开始一个事务
+    	pdo->commit():  提交一个事物
+    	$pdo->rollBack():  回滚一个事务
+    	$pdo->inTransaction(): 判断当前行是否在事务中
+    	$pdo->setAttribute(属性名，属性值): 设置pdo对象的属性。例如$pdo->setAttribute(PDO::ATTR_EERROR,PDO::ERRMODE_EXCEPTION)
+    	$pdo->quote($str): 进行字符串的转义操作
+	5,pdo的错误处理：
+		a）默认情况： pdo采用“静默模式”处理错误。如果发生了错误，返回false可以主动的获取错误信息
+		b）代码： $result = $pdo->exec();
+				  if($result ==false){
+				  		$pdo->errorInfo(); //返回一个数组（错误代码，错误标识，错误信息）,下标3 对应的是具体的错误信息
+				  }
+    6，异常模式： 让pdo进入异常模式，以处理出错的信息
+    	a）代码:	$pdo->setAttribute(PDO::ATTR_EERMODE,PDO::ERRMODE_EXCEPTION);
+    				try{
+    					$sql = '';
+    					$result = $pdo->exec($sql);
+    					echo '执行成功';
+    				} catch(Exception $e){
+    					$e->GetCode();
+    					$e->GetMessage();
+    				}
+	7,PDO的结果集对象（PDOStatement）：
+		a）概念： pdo对象执行‘返回数据结果集的sql语句’成功的时候就返回一个pdo结果集
+		b）常用方法：
+			$stmt = $pdo->query();
+			rowCount()：这个函数既能获得查询的结果集的行数，也可以获取到增删改影响的行数
+			columnCount
+			$stmt->fetch([返回类型]):从结果集里面取出一行数据，取出的结果由‘返回类型‘决定。省略默认是PDO::FETCH_BOTH
+			$stmt->fetchAll([返回类型])
+			$stmt->fetchColumn([$i]): 获取结果集的下一行的第$i个字段的值
+			$stmt->GetCode()
+			$stmt->GetMessage()
+			$stmt->bindValue()
+			$stmt->excute(): 无论是何种sql操作都是成功返回true 失败返回false
+			$stmt->closeCursor(): 关闭结果集。建议在获取完数据后释放结果集
+			-------如果用pdo执行出错用pdo的 $pdo->errorCode 跟 $pdo->errorInfo。如果用pdostatement对象就用 $stmt->errorCode 跟 $stmt->errorInfo---------------
+		c）返回类型：
+			PDO::FETCH_ASSOC: 表示关联数据
+			PDO::FETCH_NUM: 表示索引数据
+			PDO::FETCH_BOTH: 表示关联数据跟索引数组都有
+			PDO::FETCH_OBJ: 表示对象
+	8，pdo中的预处理语法（mysql扩展无法直接完成）：
+		a）预处理语法：
+			$sql = "select * from user where id=?（一个或多个占位符）"  或者
+			$sql = "select * from user where id=:v1 and name=:v2"  （：说明是一个占位标签）
+		b）使用：
+			--步骤1： $stmt = $pdo->prepare($sql)
+			--步骤2： 对$stmt中未赋值的项赋值： $stmt->bindValue(数据项1，值1 [, PDO::PARAM_INT或者PDO::PARAM_STR 指定绑定数据是什么类型])
+			--步骤1： $stmt->execute()
+			---或者不用分别赋值： $stmt->excute(array(':v1'=>值1,':v2'=>值2)) 或者 $stmt->excute(array(值1,值2)) 
+			--------$stmt->bindValue（1,12）：第一个问号绑定12--------------
+		c）好处：将语句的结构部分优先编译，结构与数据相分离，从根本上解决sql注入的问题。另一方便如果结构相同的sql重复执行，只需要编译结构一次，而重复 绑定即可，当然php如果是脚本形式，一般优化的内存不明显。
+		d）例子： function query($sql='', $params=array()){}
+	9，高级：mysql扩展跟pdo扩展都是mysql操作dao层的工具类，所以可以让二者实现相同接口，对外调用可以方便二者之间切换
+会话技术：
+	1，概念：在同一台浏览器的请求周期内，用来持久性存储数据的技术，称之为‘会话技术
+	2，特点：
+		a）区分浏览器
+		b）多次请求，数据不会丢失
+	3，为何需要：B/S架构，基于http协议，特点是无状态的：不能存储任何一次的请求响应数据。
+	4，cookie技术： 将会话技术存储在浏览器端
+		a）特点： 服务器负责将数据存储到浏览器端，浏览器每次请求的时候带上存储的数据
+		b）使用：Setcookie(key,value) 例如Setcookie('name','xx')。 获取的时候利用超全局变量$_COOKIE: $_COOKIE[key] = value
+		c）cookie的重要属性：有效期 有效路径  有效域名 安全属性
+		d）有效期：
+			---默认：浏览器关闭即失效，该cookie称为临时cookie，也就会话cookie
+			---设置有效期（持久性cookie）：通过设置setcookie的第三个参数（默认值是0，临时cookie）。有效期设置用时间戳表示：setcookie('name','xx',time() + 100)。要注意的是一旦设置了有效期，cookie的生存期就跟浏览器的关与否无关了
+		e）删除cookie：没有delete的方法，一般用： setcookie('name','',time()-1)
+		f）设置永久有效期：setcookie('name','',PHP_INT_MAX):因为setcookie的第三个参数是int类型，所以最大是PHP_INT_MAX。这样设置的是最大可以设置的有效期
+		g）cookie的有效路径： cookie按路径划分可以减少每个路径下请求携带的cookie量
+			---默认：cookie只在当前路径与后代路径有效
+			---更改：setcookie第4个参数，默认是空。例如：setcookie(,,0,'/'),设置为整站有效
+		h）有效域名：
+			---默认：仅在当前域名下面有效, 例如如果设置到www主机上不可以在mail主机上使用
+			---设置：setcookie（'','',0,'/', '.php.com'）:设置为在php.com的子域名下面都生效。这样在某个二级域名如www.php.com上设置一级域名的cookie。一般在设置有效域名的同时会将有效路径设置为 '/' 。要注意的是设置的前提是有权限进行相应的设置，例如如果在php.com上将有效域名设置为 .baidu.com浏览器就会 判断是没有权限的设置
+		i）安全属性：
+			---默认：加密与非加密形式都会被发送
+			---设置：setcookie('name';'value',time()+2,'/','',true): 加密形式连接才会被发送
+		j）HTTPonly属性：是否仅在http请求中可以使用
+			---默认：也可以在js解析之类的地方使用
+			---设置： setcookie('name';'value',time()+2,'/','',false,false): 设置只可以在http请求里面使用
+		k）使用注意细节：
+			---setcookie的value部分只能是字符串类型，不能放数组之类的
+			---key支持数组的写法：setcookie('user[name]','xxx'),setcookie('user[gender]','man'),会导致$_COOKIE里面存在一个user数组。注意setcookie里面的数组下标不需要用’‘包裹。类似于表单里面将name设置为arr[]。
+	5，Session技术： 将会话数据存储在服务器
+		a）思路：不同会话的session数据分别存储
+		b）实现：开启session：session_start()(session_start函数初始化$_SESSION数组)；开启session之后利用$_SESSION可以实现对session的所有操作；脚本执行完成之后，php核心会将session数据保存到文件中间
+		c）有效期：常规情况下浏览器关闭session失效
+		d）session与cookie不同，其存储的值可以是任意类型（bool  array....）
+		e）session存储：默认是存在服务器操作系统的临时目录的一个独立文件。也可以在php.ini里面进行session配置或者用ini_set(‘session.save_path’,'/temp')只进行自己的环境修改
+		f）session的销毁：包含删除session对应的文件和关闭session。session_destroy()。注意只会删除相应的文件，但是不会删除$_SESSION变量里面的数据跟浏览器相关的cookie。例如：session_destroy(), unset($_SESSION), setcookie(session_name(),'',time() - 1,'/')
+		g) php中对session的GC：默认在php.ini里面配置的是session.gc_maxlifetime=1400。也就是默认超过1400s没有进行访问就删除相应的文件。实际中在session_start的时候有一定几率会进行session文件的删除。删除的几率在php.ini里面可以配置：session.gc_probability=1 ，session.gc_divisor=1000(每进行1000次session的开启会进行一次session的gc)。例如：
+ 			ini_set('session.gc_maxlifetime','30');
+ 			ini_set('session.gc_probability','1');
+ 			ini_set('session.gc_divisor','3'); //最大生存期30s，有1/3概率删除
+	6，session数据属性：  session属性与php.ini设置相关
+		a）name： php.ini里面的session.name=PHPSESSID
+		b) 生命周期： php.ini里面的session.cookie_lifetime=0
+		c) 有效路径： php.ini里面的session.cookie_path= / 默认在网站根目录里面
+		d）有效域名：  php.ini里面的session.cookie_domain= 
+		e) 是否仅仅安全连接传输： php.ini里面的“;session.cookie_secure= ”
+		f) 是否为HTTPonly：php.ini里面的session.cookie_httponly= 
+		---------总结： session的属性，是由浏览器端的session id的属性决定的。所以如果要修改session属性，只需要设置相关的cookie属性就行了，这样就不需要去进行php.ini的修改。例如在session_start之前 ini_set("session.cookie_lifetime",300)------------------
+		g）除了上面ini_set修改session的属性，还可以利用专门为session机制创建的函数： session_set_cookie_params(有效期，有效路径，有效域，是否secure，是否httponly)，例如session_set_cookie_params(0,'/','',false,true)。虽然session的属性可以被设置，但一般不会修改有效期跟有效路径
+		h）session数据是序列化到磁盘的，反序列化的时候如果session里面存在对象类型，在反序列化之前必须要先有相应的类的定义，否则读到的数据相应的类名会是php_incomplete_class
+		i）php支持在url或者表单里面自动添加PHPSESSID，这样可以不用cookie去传递，使用更灵活。php.ini里面对应的配置： 默认： session.use_only_cookies = 1  session.use_trans_sid = 0。要在cookie被禁用的时候（例如有的页面就是禁止cookie的传输）使用session可以这样这是： ini_set('session.use_only_cookies','0') ini_set('session_use_trans_sid','1') 这时url请求跟表单请求里面都会自动的带上sessid
+		j）持久化session：
+			持久化浏览器端session id： session_set_cookie_params(3600)
+			持久化服务器端session数据区：ini_set('session.gc_maxlifetime','3600')
+其他注意点：
+	1，header（）函数执行之后的所有代码还是会被解析执行，如果要进行跳转，最好在header函数后面终止程序的执行。

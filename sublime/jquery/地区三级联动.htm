@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>地区三级联动</title>
+	<script src='./jquery-1.12.3.min.js'></script>
+	<script>
+		var provinceXml,citiesXml,areaXml;
+		$(function(){
+			//获取到province city  area的ajax请求，并存贮。因为.get .post是异步的，这里的代码后面就执行了showProvince所有要同步
+			$.ajax({ 'url':'./chinaArea/Provinces.xml',
+				'dataType':'xml',
+				'type':'get',
+				'success':function(msg){
+				provinceXml = msg; 
+			},
+			'async':false });
+			$.ajax({ 'url':'./chinaArea/Cities.xml',
+				'dataType':'xml',
+				'type':'get',
+				'success':function(msg){
+				citiesXml = msg; 
+			},
+			'async':false });
+			$.ajax({ 'url':'./chinaArea/Districts.xml',
+				'dataType':'xml',
+				'type':'get',
+				'success':function(msg){
+				areaXml = msg; 
+			},
+			'async':false });
+
+			showProvince();
+			$('#province').change(showCity);
+			$('#city').change(showArea);
+		});
+
+		/**
+		 * 显示省份信息
+		 * @return {[type]} [description]
+		 */
+		function showProvince(){
+			$(provinceXml).find('Province').each(function(){
+				addOption('#province',$(this).attr('ID'),$(this).text());
+			});
+		}
+
+		/**
+		 * 添加一个option到一个select
+		 * @param {String} s         select的选择器	
+		 * @param {String} value     待添加的option的value
+		 * @param {String} innerText 待添加的option的内部文本
+		 */
+		function addOption(ss,value,innerText){
+			$(ss).append("<option value="+value+">"+innerText+"</option>");
+		}
+
+		function showCity(){
+			var pid = $('#province').val();
+			$('#city option:gt(0)').remove();
+			$(citiesXml).find('City[PID='+pid+']').each(function(){
+				addOption('#city',$(this).attr('ID'),$(this).text());
+			});
+		}	
+
+		function showArea(){
+			var cid = $('#city').val();
+			$('#area option:gt(0)').remove();
+			$(areaXml).find('District[CID='+cid+']').each(function(){
+				addOption('#area',$(this).attr('ID'),$(this).text());
+			});
+		}
+	</script>
+</head>
+<body>
+	<h2>地区三级联动</h2>
+	<select name="province" id="province">
+		<option value="0">-请选择-</option>
+	</select>
+	<select name="city" id="city">
+		<option value="0">-请选择-</option>
+	</select>
+	<select name="area" id="area">
+		<option value="0">-请选择-</option>
+	</select>
+</body>
+</html>

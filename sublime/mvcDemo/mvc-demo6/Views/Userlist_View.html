@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>mvc控制器类演示</title>
+	<style>
+		table {
+			border-collapse: collapse;
+		}
+		td {
+			border: 1px solid silver;
+		}
+	</style>
+</head>
+<body>
+	<a href="?c=User&a=ShowForm">添加新用户</a><br>
+	用户列表：
+	<table>
+		<?php
+			foreach ($data1 as $key => $value) {		
+		?>
+		<tr>
+			<td><?php echo $value['name'] ?></td>
+			<td><?php echo $value['password'] ?></td>
+			<td><?php echo $value['age'] ?></td>
+			<td><?php echo $value['xueli'] ?></td>
+			<td><?php echo $value['fav'] ?></td>
+			<td><?php echo $value['aspect'] ?></td>
+			<td><?php echo $value['zhuceTime'] ?></td>
+			<td><a href="?c=User&a=del&id=<?php echo $value['id'] ?>" onclick='return window.confirm("确认删除?")'>删除</a></td>
+ 			<td><a href="?c=User&a=detail&id=<?php echo $value['id'] ?>">详细</a></td>
+   			<td><a href="?c=User&a=edit&id=<?php echo $value['id'] ?>">修改</a></td>
+		</tr>
+	 	<?php  
+		}
+	 	 ?>
+	</table>
+	当前用户总数：<?php echo $data2 ?>
+</body>
+</html>

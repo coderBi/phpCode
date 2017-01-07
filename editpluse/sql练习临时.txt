@@ -1,0 +1,125 @@
+#创建并添加学生表
+create table student(id int auto_increment primary key,name varchar(10) unique key,gender enum('男','女'),provence varchar(10),college_id int);
+insert into student(name,gender,provence,college_id) values('罗地华','男','江西',1),('韩顺平','男','四川',2),('吴英磊','男','黑龙江',1),('王玉红','女','河北',3),('赵玉川','男','河北',3),('刘兆英','女','江西',1);
+
+#创建并添加学院表
+create table college(id int auto_increment primary key,name varchar(20) unique key, address varchar(50),phone varchar(20));
+insert into college(name,address,phone)values('计算机系','行政楼302','010-666666'),('数学系','科研楼108','010-7777777'),('物理系','行政楼305','010-88888');
+
+#查询计算机系学生信息
+select s.* from student as s inner join college as c on s.college_id=c.id where c.name='计算机系';
+
+#查询‘韩顺平’的学院信息
+select c.* from student as s inner join college as c on s.college_id=c.id where s.name='韩顺平';
+
+#查询在地址在行政楼的学院名称
+select name from college where address like '行政楼%';
+
+#查询男女人数
+select gender, count(*) from student group by  gender;
+
+#查询人数最多的学院信息
+select c.* from student as s inner join college as c on s.college_id=c.id group by c.id order by count(*) desc limit 1;
+
+#创建视图v1，得到人数最多的学院id
+create view v1(id) as select c.id from student as s inner join college as c on s.college_id=c.id group by c.id order by count(*) desc limit 1;
+
+#查询人数最多的学院中男女生各自人数
+select gender,count(*) as 人数 from student inner join v1 on college_id=v1.id group by gender;
+
+#创建view v2，得到姓名‘罗地华’的省份
+create view v2(provence) as select s.provence from student as s where s.name = '罗地华';
+
+#查询跟‘罗地华’同一个省份的学生信息
+select  student.*  from student inner join v2 on student.provence=v2.provence;
+
+#得到有‘河北’学生的的学院信息
+select c.* from student as s inner join college as c on s.college_id=c.id where s.provence='河北' group by c.id;
+
+#创建view v3，得到‘河北’女生的学院id列表
+create view v3 as select college_id from student where provence='河北' and gender='女' group by college_id;
+#得到与‘河北’‘女’同学院的学生信息
+select student.* from student inner join v3 on student.college_id=v3.college_id;
+
+#创建一个函数
+create function getMax(p1 int, p2 int, p3 int)
+returns int
+begin
+	declare result float;
+	if(p1 >= p2 and p1 > p3) then 
+	begin
+		set result = p1;
+	end;
+	elseif(p2 >= p1 and p2 > p3) then
+	begin
+		set result = p2;
+	end;
+	else
+	begin
+		set result = p3;
+	end;
+	end if;
+	return result;
+end;
+
+#使用inout
+create procedure pro1(in p1 int, out p2 int, inout p3 int)
+begin
+	set p2 = p1;
+	set p3 =  p1*3;
+	select p1,p2,p3;
+end;
+call pro1(1,var1,var2);
+
+#创建触发器
+create trigger tri1 after insert on tb1 for each row as
+begin
+	/*一下代码负责插入新数据的时候跟新最大值列表*/
+	delete * from max_tb;
+	select max(f1) into @maxf1 from tb_int;
+	/*没有办法将下面的赋值进行连写,也就是 f2 into,f3 into 不能连写*/
+	select f2 into @v2 from tb_int where f1 = @maxf1;
+	select f3 into @v3 from tb_int where f1 = @maxf1;
+	insert into max_tb(f1,f2,f3) values(@maxf1,@v2,@v3);
+	......
+end;
+
+#创建另一个学生表并插入数据
+create table stu(id int auto_increment primary key,name varchar(10) unique key, gender enum('男','女'));
+insert into stu(name,gender,class_id) values('张三','男'),('张四','男'),('张五','女'),('张六','男'),('张七','男');
+
+#创建课程表并插入数据
+create table class(id int auto_increment primary key,name varchar(50));
+insert into class(name)values('html'),('js'),('mysql'),('php');
+
+#创建学生课程表并插入数据
+create table stu_class(id int auto_increment primary key, stu_id int, class_id int, score int);
+insert into stu_class(stu_id,class_id,score)values(1,1,88),(1,2,77),(2,1,78),(2,2,91),(3,1,55),(3,2,65),(3,3,75),(4,1,74),(5,1,21),(5,2,49),(5,3,47),(5,4,90);
+
+#查询修mysql学生姓名
+select s.name from stu as s inner join stu_class as su on s.id=su.stu_id inner join class as c on su.class_id=c.id where c.name='mysql';
+#或者，用子查询
+select name from stu where id in(select stu_id from stu_class where class_id=(select id from class where name='mysql') group by stu_id);
+
+#查询‘张三’修的课程名
+select c.name from stu as s inner join stu_class as su on su.stu_id=s.id inner join class as c on su.class_id=c.id  where s.name='张三';
+
+#查询只修了一门课的学生学号跟姓名
+select s.id,s.name from stu as s inner join stu_class as sc on s.id=sc.stu_id group by s.id having count(*)=1;
+
+#查询至少有3门课的学生信息
+select s.* from stu as s inner join stu_class as sc on s.id=sc.stu_id group by s.id having count(*) >= 3;
+
+#查询修了所有课程的学生信息
+select s.* from stu as s inner join stu_class as sc on s.id=sc.stu_id group by s.id having count(*) >= (select count(*) from class);
+
+#查询选修了课程的总人数
+select count(*) from (select s.id from stu as s inner join stu_class as sc on s.id=sc.stu_id group by s.id having count(*) > 0) as si;
+
+#查询至少有一门课程跟‘张三’相同的学生信息
+select s.* from stu as s inner join stu_class as su on s.id=su.stu_id where su.class_id in (select su.class_id from stu s inner join stu_class as su on s.id=su.stu_id where s.name='张三') group by s.id;
+#子查询实现
+select * from stu where id in(select stu_id from stu_class where class_id in(select class_id from stu_class where stu_id=(select id from stu where name='张三')) group by stu_id);
+
+#查询两门及以上不及格学生的平均分
+select name,avg(score) from stu_class inner join stu on stu.id=stu_class.stu_id where stu_id in(select stu_id from stu_class where score < 60 group by stu_id having count(*) >= 2) group by stu_id;

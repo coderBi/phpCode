@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>调用自己的jquery扩展</title>
+	<style>
+		table {border: 1px solid #000; border-collapse: collapse;}
+		table td {border: 1px solid #000;}
+	</style>
+	<script src='./jquery-1.12.3.min.js'></script>
+	<script src='./jquery-extend.js'></script>
+	<script>
+		$(function() {
+			$('table').setTableColor();
+		});
+	</script>
+</head>
+<body>
+	<script>
+		$().consolePrint('扩充jquery对象：自己的扩展调用');
+		$.consolePrint('这是直接扩充$ 的方法');
+	</script>
+	<table>
+		<thead>
+			<tr>
+				<td>name</td>
+				<td>age</td>
+				<td>sex</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>bww</td>
+				<td>12</td>
+				<td>男</td>
+			</tr>
+			<tr>
+				<td>tom</td>
+				<td>11</td>
+				<td>男</td>
+			</tr>
+			<tr>
+				<td>jim</td>
+				<td>21</td>
+				<td>男</td>
+			</tr>
+			<tr>
+				<td>lily</td>
+				<td>32</td>
+				<td>女</td>
+			</tr>
+			<tr>
+				<td>傻X</td>
+				<td>0</td>
+				<td>未知</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

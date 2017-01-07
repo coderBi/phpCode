@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>用户详细信息</title>
+	<style>
+		#user_name_in_h1{
+			color: red;
+		}
+	</style>
+</head>
+<body>
+	<h1>用户<span id='user_name_in_h1'><?php  echo $result['name']; ?></span>的详细信息：</h1>
+	<table>
+		<tr>
+			<td>用户名：</td>
+			<td><?php echo $result['name']; ?></td>
+		</tr>
+		<tr>
+			<td>年龄：</td>
+			<td><?php echo $result['age']; ?></td>
+		</tr>
+		<tr>
+			<td>爱好：</td>
+			<td><?php echo $result['fav']; ?></td>
+		</tr>
+
+		<tr>
+			<td>来自：</td>
+			<td><?php echo $result['aspect']; ?></td>
+		</tr>
+		<tr>
+			<td>注册时间：</td>
+			<td><?php echo $result['zhuceTime']; ?></td>
+		</tr>
+	</table>
+	<a href="?">返回</a>
+</body>
+</html>
