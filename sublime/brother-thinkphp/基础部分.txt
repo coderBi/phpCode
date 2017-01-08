@@ -60,3 +60,4 @@ ThinkPHP核心文件介绍
 		</IfModule>
  ④：兼容模式： 因为有些服务器可能不能完全兼容pathinfo模式。所以给出了这种兼容模式
 	/Projects/index.php?s=Home/Index/index/name/bww
+
