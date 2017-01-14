@@ -1,0 +1,530 @@
+thinkphp3.2.3目录结构：
+	Application: 应用目录
+	Public:资源文件目录
+	ThinkPHP: 框架目录
+	.htacess: Apache配置文件，如果对于请求路径需要开启重写模式（不带index.php）,不仅要修改Apache的config还要在这个文件中填写如下代码：
+		<IfModule mod_rewrite.c>  #这句的意思是判断如果mod_rewrite开启
+			Options +FollowSymlinks #这句代码不可少，否则会报错
+			RewriteEngine On
+			RewriteCond %{REQUEST_FILENAME} !-d #添加重写条件判断，如果请求文件不是文件夹
+			RewriteCond %{REQUEST_FILENAME} !-f #如果请求的文件不是文件
+			RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L] #重写规则
+		</IfModule>
+	index.php: 入口文件
+----note： thinkphp3.2开始，thinkphp自带了一个完整的应用目录(Application)和默认的应用入口文件(index.php)。程序员可以调整这两个文件的位置。
+
+ThinkPHP框架文件目录：
+	Common: 核心公共函数目录
+	Conf: 核心配置目录
+	Lang: 核心语言目录
+	Library: 框架类库目录
+		---Think： 核心Think类库
+		---Behavior：行为类库
+		---Org：Org类库
+		---Vendor：第三方类库
+		---...: 可能存在更多的其他类库
+	Mode: 框架应用模式目录
+	Tpl；系统模板目录
+	LICENSE.txt: 框架授权协议文件
+	logo.png
+	README.txt
+	index.php: 框架入口文件
+-----note: 框架中的文件结构一般不需要进行修改，但是可以求改框架的目录名(ThinkPHP)，这样在入口文件中引用的路径也要进行相应的修改。
+
+入口文件index.php：3.2开始默认带入口文件，其中的默认内容如下：
+	define('APP_PATH','./Application/'); //注意目录最后面的那个反斜杠一定不能少
+	require './ThinkPHP/ThinkPHP.php'; //注意目录名称的大小写一定要注意，因为linux这样的系统是区分文件名大小写的。
+----根据需要，index入口文件可以做如下修改：
+	---define('BIND_MODULE','Admin'); //默认是是访问Home模块的，如果这样设置，就会访问到Admin模块，如果这个模块不存在会创建一个默认的目录结构。
+	---define('RUNTIME_PATH','./Runtime/'); //修改runtime目录的位置
+	---define('APP_DEBUG',true); //调试模式，默认是关闭的。开发阶段一般要开启
+----关于部署模式与调试模式：
+	二者最主要的区别是部署模式采用了项目编译机制。第一次运行会对核心和项目相关文件进行编译缓存，这样会影响后续对配置文件、函数文件、数据库修改的生效。如果要避免这种缓存，需要手动清理runtime目录中的内容或者开启debug模式。
+----项目上线之后，为了避免泄露web目录等信息，一定要关闭debug模式。
+
+
+第一次运行会在Application目录下生成如下内容：
+	Common: 应用公共模块
+		---Common：应用公共函数目录
+		---Conf：应用公共配置文件目录
+	Home: 默认生成一个Home模块
+		---Conf：模块配置文件目录
+		---Common： 模块函数公共目录
+		---Controller：模块控制器目录
+		---Model：模块模型目录
+		---View：模块视图文件目录
+	Runtime：运行时目录
+		---Cache：模块缓存目录
+		---Data：数据目录
+		---Logs：日志目录
+		---Temp：缓存目录模块设计
+
+关于配置文件：
+	所有模块公共的配置文件位于 Common/Conf/config.php。 每一个模块内部自己的配置文件位于 模块/Conf/config.php。其中的内容格式如下:
+		return array(
+			'配置项' => '配置值',
+		);
+----note: 一般配置文件的格式是.php。也可以修改配置文件后缀，在入口文件中这样定义： define('CONF_EXT','.ini');  如果这样设置配置文件的名称就成了config.ini
+
+
+控制器： 每一个控制器对应一个控制器类，控制器类的命名格式：控制器名 + Controller.class.php 模块名首字母大写采用驼峰命名.
+---系统默认控制器Index，对应路径为 模块/Controller/IndexController.class.php。类名必须与文件名称一致，也就是只能叫做IndexController。默认内容如下：
+	<?php
+		namespace Home\Controller;
+		use Think\Controller;
+		class IndexController extends Controller {
+			public function index(){ //默认存在一个Public的index方法
+			
+			}
+		}
+-----Controller里面的函数如果要对外相应请求，只能是Public的，否则会返回非法操作。
+
+URL模式：
+	a）普通模式：普通模式使用传统的GET参数传递模块、控制器、方法
+		http://localhost/index.php?m=Home&c=Index&a=index&name=bww
+	b)PATHINFO模式： 系统默认是的pathinfo模式。提供了最好的seo支持，系统内部做了环境的兼容处理，能够支持大多数的主机环境。
+		http://localhost/index.php/Home/Index/index/name/bww  //后面用的是name/bww传递一个参数。
+		或者也可以写成：
+		http://localhost/index.php/Home/Index/index?name=bww
+	------可以在配置文件中修改url中参数分隔符：
+		'URL_PATHINFO'=>'-'; //修改位 ‘-’
+		这样url必须写成如下格式才能正常访问：
+		http://localhost/index.php/Home-Index-index-name-bww
+	c) REWRITE模式：在pathinfo的基础上进行重写，可以去掉路径中的index.php。需要开启Apache cofig文件里面的相应扩展，并且在入口文件同级目录添加.htaccess文件。
+		http://localhost/Home/Index/index/name/bww
+	d）兼容模式：有些系统可能对pathinfo支持不是很好，可以使用兼容模式
+		http://localhost/index.php?s=/Home/Index/index/name/bww
+	---兼容模式配置web服务器重写规则的自定义，可以达到与rewrite模式相同的效果。
+
+视图：thinkphp内置了编译模板引擎，支持原生的php模板，并且提供了包括smarty在内的模板引擎驱动。thinkphp在渲染模板的时候如果不指定模板，会使用系统默认的定位规则，寻找的路径是 模块/View/控制器名/操作名.html。
+	$this->assign('name',$name); //绑定变量传递到模板
+	$this->display(); //默认模板路径
+	$this->display(‘方法名’); //当前控制器对应view目录下面的给定方法名.html
+	$this->display('Index\index'); //在当前模块View下寻找指定位置
+	$this->display('Home\Index\index'); //在指定模块寻找指定位置
+
+配置数据库：在config.php中配置如下
+	'DB_TYPE'=>'mysql', //数据库类型
+	'DB_HOST'=>'127.0.0.1', //服务器地址
+	'DB_NAME'=>'thinkphp', //数据库名
+	'DB_USER'=>'root',
+	'DB_PWD'=>'123',
+	'DB_PORT'=>3306,
+	'DB_PREFIX'=>'think_', //表名前缀
+	'DB_CHARSET'=>'utf8', //数据库字符集
+访问数据库：在Controller文件中利用 M 方法实例化一个表操作的模型对象
+	$Data = M('Data'); //实例化think_data表操作模型。M方法直接操作底层的Model类，底层的Model类具备crud方法。
+	$result = $Data->find(1);
+	//绑定结果
+	$this->assign('result',$result);
+	$this->display();
+	---然后在view中相应html中使用 {$result.id} 访问id 使用{$result.data}访问data
+
+
+CRUD: create read update delete, thinkphp中对应了add select save delete方法
+---create:
+	①：定义一个FormModel类型，在其中添加 $_validate 跟 $_auto属性，意味着配置了自动验证跟自动完成。代码如下
+	class FormMode extends Model {
+		$_validate = array(
+			array('title', 'require', '标题必须'), //表单中的name为title的内容不能为空
+		);
+		$_auto = array(
+			array('create_time', 'time', 1, 'function'); //使用time方法自动填充create_time字段（对应到数据库中）
+		);
+	}
+	②：定义FormController控制器，其中包括两个方法 add（主要是显示表单,因为不需要处理额外的工作，所以不用定义，thinkphp在没有找到相应的Controller但是找到了相应的视图的时候就会直接打给浏览器这个视图） insert负责插入数据
+	class FormController extends Controller {
+		//add方法省略不需要。 这里只需要定义insert方法
+		public function insert(){
+			$Form = D('Form'); // 创建Form模型类对象
+			if($Form->create()){ //自动验证与填充，如果失败返回false，成功返回true
+				$result = $Form->add(); // 向数据库中插入数据。插入的数据内容是create方法执行后生成的。如果插入成功并且数据库主键是自增的就返回主键，如果插入成功但是主键不是自增的就返回插入的数目，如果失败返回false
+				if($result){
+					$this->success('添加数据成功');
+				} else {
+					$this->error('插入数据失败');
+				}
+			} else {
+				$this->error($Form->getError()); //create失败，通过getError得到错误信息。
+			}
+		}
+	}
+	③：添加视图 Form\add.html
+	<form method='post' action='__URL__/insert'>
+		<input name='title' type='text' /><br>
+		<textarea name='content' rows='10' cols='30'></textarea><br>
+		<input type='submit' value='提交'/>
+	</form>
+
+---read:
+	Controller中基本代码：
+		$Form = M('form');
+		$data = $Form->find($id);  //通过id查询
+		$title = $Form->where('id==1')->getField('title'); //得到某一列的值
+		$this->assign(); //绑定供模板使用。
+---update：
+	①：在Controller中添加代码，一个是编辑，一个是将编辑到的信息更新到数据库
+		public function edit($id=0){
+			$form = M('form'); //只用到查找，用M函数足够
+			$this->assign('vo', $form->find($id));
+			$this->display();
+		}
+		public function update(){
+			$form = D('form'); //用到了表单的验证，所以用D函数
+			if($form->create()){
+				$result = $form->save(); //基础model类里面有save方法，自动的会添加根据主键查询条件
+				if($result){
+					$this->success('更新成功');
+				} else {
+					$this->error('更新失败');
+				}
+			} else { //表单验证失败
+				$this->error($form->getError()); //获取表单验证失败的显示信息并返回到视图
+			}
+		}
+	②：在FormModel类里面添加自动验证与自动完成代码，这个在之前的添加数据库已经写过了
+	③：添加视图 edit.html
+		<form method='post' action='__URL__/update'>
+			标题：<input type='text' name='title' value='{$vo.}'/><br>
+			内容: <textarea name='content' rows='5' cols='45'>{$vo.content}</textarea><br>
+			<input type='hidden' name='id' value='{$vo.id}'/>
+			<input type='submit' value='提交' />
+		</form>		
+-----关于D方法与M方法：D方法创建的是用户自定义的Model类，用这个方法必须自己写一个与数据库表名一样的Model类，例如上面的FormModel。由于D方法创建的对象也是继承于基础Model类的，所以像find select save where这些函数默认它也一样有。而用M方法创建的对象就是基础模型类对象，只是在创建的时候提供了一个要操作的表名。所以说D方法其实包括了M方法，比M更丰富，方便用户扩展。
+----关于create方法： create可以有参数： $form->create($_POST, 1)，第二个参数如果1表示是插入操作，如果是0表示更新操作，如果缺省，内部会自己判断是否是插入还是更新，判断的方式是看是否有主键项，如果有认为是更新。create方法也可以不要参数  $form->create()这样自动根据form类的设置验证post跟get提交的数据。create函数执行失败返回false。
+----关于save方法；其实也可以带上参数，这个参数是向数据库中插入的对象，例如 $data['id']=1;$data['content']='test';$form->save($data)。也可以不带参数直接 $form->save()。这个跟create方法类似，会处理前台出入的数据。save失败返回false，成功返回受影响的记录条数。 $form->save() 的效果 同$form->where('id=1')->save()
+----如果这是修改某个字段的值可以使用setField而不用save：
+	$form->where('id=1')->setField('title','thinkphp');
+----对于统计字段thinkphp提供了setInc 和setDec方法，它们对某一个字段进行数字的累加或者累减。$form->where('id>1')->setInc('count')这样写表示加一，如果是$form->where('id>1')->setInc('count',3)表示加三。
+
+---delete；
+	$form->delete(1); //删除主键为1的数据
+	$form->where('id>1')->delete();
+	$form->delete('1,3,5'); //删除主键为 1 3 5 的数据
+---note: delete函数如果删除成功返回成功删除的记录条数，如果失败返回false，如果返回的是 0 表示条件判断没有删除记录。
+
+
+thinkphp的orm： 使用thinkphp的查询语言可以实现绝大多数数据库的切换问题。操作也更为方便。
+----查询条件：可以是字符串　数组　对象
+	a) 字符串做查询条件：不安全， 新版本提供了字符串作为条件的安全机制
+		$user = M('user');
+		//下面的语句生成的sql是: select * from think_user where id=1 and status=1;
+		$user->where('id=1 and status=1')->select();
+	b)数组做查询条件：最常用的方式，可以跟对象做查询条件进行切换
+		$user = M('user');
+		$condition['name'] = 'thinkphp';
+		$condition['status'] = 1;
+		//默认数组的各个项之间是and连接。可以通过设置数组的 _logic属性改变这个连接方式
+		$condition['_logic'] = 'OR'; //修改为用or连接
+		$user->where($condition)->select();
+	c)对象作为查询条件：跟数组基本一样。所以一般使用上面的数组，因为使用数组更为高效。
+		$user = M('user');
+		$condition = new stdClass(); //stdClass是内置对象
+		$condition->name = 'thinkphp';
+		$condition->status = 1;
+		$user->where($condition)->select();
+-----表达式查询： 复杂的查询条件  利用表达式更安全
+	$map['字段名'] = array('表达式', '查询条件');
+	---比较：
+	$map['id'] = array('eq',100);
+	$map['id'] = array('neq',100);
+	$map['id'] = array('gt',100);
+	$map['id'] = array('egt', 100);
+	$map['id'] = array('lt', 100);
+	$map['id'] = array('elt',100);
+	---like notlike:
+	$map['content'] =array('like','thinkphp%');
+	$map['content'] =array('notlike','thinkphp%');
+	$map['content'] = array('like', array('thinkphp%','%thinkphp'), 'or'); //使用数组匹配，并且他们的逻辑关系是or
+	$map['content'] = array('notlike', array('thinkphp%','%thinkphp'), 'and');
+	----between notbetween
+	$map['id'] = array('between', '1,5');
+	$map['id'] = array('between', array('1','5')); //这个语句跟上面的等效
+	----in not in
+	$map['id'] = array('not in', '1,2,5');
+	$map['id'] = array('not in', array('1','2','5')); //这条语句跟上面的等效
+	----exp表达式： exp的值可以使用sql支持的字段跟函数。
+	$map['id'] = array('exp', 'in (1,2,5)');
+	---note: exp表达式还可以用来更新数据：
+		//把grade字段进行+2
+		$map['grade'] = array('exp', 'grade + 2'); 
+		$user->where('id=1')->save($map);  //更新
+----快捷查询：不同字段的查询写法更简洁
+	---不同字段相同值：
+		$map['name|title'] = 'thinkphp';
+		$goods->where($map)->select(); //生成的sql语句: select * form goods where name='thinkphp' or title='thinkphp';
+	---不同字段不同值：
+		//_multi属性必须放在最后，如果值是true表示的是多条件
+		$map['id&name'] = array(1,'bww','_multi'=>true); //生成的条件是：id=1 and name='bww'
+		$map['id&name&grade'] = array(array('between','1,100'), 'bww', '2',_multi'=>true);
+	---note: 在快捷查询里面 不能出现 | 与 & 同时使用。
+----区间查询：对某一个字段使用
+	$map['id'] = array(array('gt',1),array('lt',10)); //默认各个项之间是and连接
+	$map['id'] = array(array('gt',10),array('lt',5), 'or'); //连接条件是 or
+	$map['id'] = array(array('gt',5),array('eq',10), 'xor'); //连接条件是 xor,异或，意味着一个成立另一个就不能成立。这个语句条件就是大于等于5但是不能等于10
+	$map['id'] = array(array('gt',5),array('lt',3), 4, 'or');
+	----note: 区间查询，里面的子项可以支持所有的普通查询表达式,例如gt like between exp 
+----组合查询： 主体是数组查询，包括字符串模式查询 复合查询  请求字符串查询。
+	---字符串模式查询： _string
+	//数组查询与字符串条件混合
+	$map['id'] = array('in' array('2','4'));
+	$map['_string'] = 'name="bww" and grade="1"';
+	$user->where($map)->select();
+	///上面的语句最后得到的条件是：(id in (''2,'4')) and (name='bww' and grade='1')
+	---请求字符串查询： 类似于url传参 _query
+	$map['id'] = array('gt',100);
+	$map['_query'] = 'name=bww&grade=1&_logic=or'; ///特别注意，请求字符串查询里面的键值对在生成sql语句的时候会自动的在值的两边加上''，所以不能写成 name="bww"
+	///上面语句得到的条件语句： (id > 100) and (name='bww' or grade='1')
+	---复合查询：向一个查询条件中添加一个新的查询条件，进行查询条件的组装 _compex
+	$where['name'] = array('like', 'thinkphp%');
+	$where['grade'] = '1';
+	$where['_logic'] = 'or';
+	$map['_complex'] = $where; //先将之前的条件收起来
+	$map['id'] = array('gt', 5); //添加新的条件
+	////上面的语句产生的查询条件是： (id > 5)  and (name like 'thinkphp%' or grade='1')
+	------note: 通过测试，字符串模式查询，不能与请求字符串查询同时出现，否则请求字符串查询被优先解析，将字符串模式查询的属性项解析掉，然后由于意外解析成 (),也就是解析成了空的字符串。
+----统计查询：常用的统计数目 平均值等
+	$user->count(); //获取数量
+	$user->count('id'); //根据id获取数量。
+	$user->max('score');
+	$user->min('score');
+	$user->where('score>0')->avg('score');
+	$user->sum('score');
+	---note: 所有的统计查询都支持连贯操作。
+
+----原生sql查询：thinkphp保留了原生sql查询，查询的结果是原生的数据集，没有进行处理，需要程序员自己处理。
+	---qurey($sql, $parse=false)：第二个参数表示是否需要解析sql。成功返回结果集，否则返回false。
+		$model = new Model(); //实例化一个基础model类，没有对应任何表。
+		$model->query('select * from think_user where id=1');
+	---execute($sql,$parse=false): 用于更新删除插入语句。成功返回受影响的记录条数，失败返回false。
+		$model->execute('update think_user set name="bww" where id=1');
+
+----动态查询：thinkphp根据php5实现了动态查询
+	---getBy: 例如getByName()就是根据name字段查询数据。
+		$form->getByContent('你好'); //返回content内容是'你好'的记录
+	---note：如果通过多个字段查询，只能用find 或者 select
+	---getFieldBy: 例如 getFieldByName('bww','id')就是查询name为bww的id
+----子查询：构建子查询的方法一般有两种，select(false)，这个函数如果参数指定位false就返回构建的sql而不是结果集。另一种是buildSql(),构建子查询
+	$subQuery = $form->field('id,title,content')->table('form')->where('id>10')->group('id')->having()->order('id')->select(false);
+	$subQuery = $form->field('id,title,content')->table('form')->where('id>10')->group('id')->having()->order('id')->buildSql();
+	///使用上面的subQuery
+	$form->table($subQuery.' a')->where('id>10')->getFieldById('11','content'); //如果子查询是当做了数据源，那么必须要给一个别名
+	-----note: 子查询可以用于thinkphp的连贯操作，例如table where等
+
+连贯操作： thinkphp连贯操作没有先后顺序 select find delete add save不是连贯操作方法，必须放在最后面
+	---where($where): 可以有多个where进行连贯操作. 参数不能为空，返回当前模型实例。
+	---table($table)：要操作的表，可以动态的修改。支持跨库操作。默认获取当前模型定义或者对应的表。
+		$model->table('db_name.think_user user')->where()
+	---table函数，除了使用字符串参数，也可以使用数组参数，这样可以避免表名跟关键字冲突的出错情况。
+		$model->table(array('think_user'=>'user','think_form'=>'form'))
+	---data($data): 给新增或者保存之前的数据对象赋值。如果没有，save或者add默认取当前对象传入或者也可以在add或者save函数的参数里面传入。data函数类型可以是数组或者对象。
+		$model->data($data)->add();
+		$model->data($data)->where($where)->save();
+	-----data函数如果传入的是对象，会在内部自动的转换成数组。如果不通过$data传入，也可以通过create方法给当前对象的data属性赋值（验证通过，会填充data）。
+	-----data函数除了创建数据对象之外也可以取出当前数据对象的内容
+		$this->find(1);
+		$data = $this->data();
+	---field($field,$except=false): field参数可以是字符串或者数组，支持指定别名。如果field参数是true表示数据库表的所有字段。$except参数默认是false，如果是true表示取的字段是除了$field参数指定的之外的所有字段。
+		$model->field('*')->select();
+		$model->field(array('id','username'=>'name'))->select();
+		$model->field('id',true)->find(1); //不获取id字段
+	---order($order): $order指定字段，可以是字符串或者数组。支持多个字段的排序。
+		$order('id desc,name asc');
+		$order(array('id'=>'desc','name'));
+	---limit($limit): thinkph做了内部支持，这个函数支持所有的数据库类型。
+		limit('1,10'); //取出来 1~9这十条记录
+		limit('10'); //等价与 limit('0,10')
+	---page($page): 定义要查询的数据分页。参数支持字符串
+		page('2,10') //每一页10条记录，获取第2页
+		page(2,10) //与上面等价
+	------note：如果只有一个参数，例如 page(2),表示取第二页，每一页的长度去limit设置的长度，例如limit('1,10')，page就取它的10，如果limit也没有指定，就默认为20
+	---group($group): 参数只支持字符串
+		group('user_id')
+	---having($having): 参数只支持字符串
+		$model->where()->group('user_id')->having('user_id>100')
+	---join($join): 参数支持字符串跟数组，可以有多个join函数连贯操作. 如果参数是数组，只能用一次join
+		$model->join('right join work on user.work_id=work.id')->join('book on book.id=user.book_id') //默认的join方式是inner join
+		$model->join(array('address on user.address_id=address.id', 'left join book on user.book_id=book.id')); ///参数是数组只能用一次
+	---union($union,$all=false): 参数可以是字符串或者数组，第二个参数表示是否是 union all, 如果是union all 不会进行去重。可以有多个union
+		$model->field('name')->union('select name from table1')->union(array('select name from table2','select name from table3'),true)->union(array('field'=>'name','table'=>'table4'))
+	---distinct($distinct): 参数bool，是否去重
+		$model->distinct(true)->field('name')->select();
+	---lock($lock): 如果设置为true，会在语句的后面加上 for update
+	---validate($validate): 必须要与create方法一起使用
+	---auto($auto): 必须要与create方法一起使用
+	---scope($scope): 是连贯操作的预定义， 指出模型的命名范围（命名范围是tp3.1加入）
+	---filter($filter_function): 传入过滤的方法名，进行数据安全的过滤
+		$model->data($data)->filter('strip_tags')->add();
+-----关于 validate create 函数使用：
+	实际测试发现一下知识点：
+		①：如果是通过D创建model可以指定相应Model的$_validate属性，这是静态验证。
+		②：如果不指定$_validate属性，或者使用M方法创建对象，可以使用连贯操作 $form->validate('name','require','姓名不能为空')
+		③：如果validate函数或者属性，指定的一个字段不存在，那么就忽略与之相关的验证判断。这样可能虽然返回了验证成功，但是实际结果不是自己想要的。
+		④：create方法默认的数据源是POST数组，是用来进行表单验证的，不过这个函数也可以带上参数。create($data,1),第二个参数如果是1表示插入，如果是0表示更新，如果没提供会通过$data是否包含数据库对应的主键，如果有就是更新。
+		⑤：create如果验证成功了，会填充模型类的$_data属性。连贯操作如果使用了data()，这个函数是直接填充$_data属性。所以data跟create不应该同时出现在一个连贯操作里面（出现create，可以选择是否使用validate）。
+		⑥：$_data属性，如果在create函数执行失败，不会填充data属性，
+		⑦：$form->data()，函数可以返回内部的data属性，但是如果这个属性是空内容的，data()函数会返回这个model类本身。
+		⑧：如果POST数据源为空，并且没有向create提供待验证的数据$data，create会返回false，并且将出错信息置成"非法数据对象!"。如果出现这个错误，需要看看数据源是否为空。
+
+I方法：用于安全的获取输入变量。I('变量类型.变量名/修饰符',['默认值'],['过滤方法'],['额外数据源'])
+	-----没有框架的时候使用 $_GET['key'] $_POST['key'] $_SESSION['key'] $_COOKIE['key'] $_SERVER['key'] 获取各个范围的变量。这样不方便统一的安全过滤。
+	----变量类型如下： 默认类型是param
+		get post put request session cookie server globals
+		param: 获取get post put里面的参数
+		path: 获取pathinfo模式的url参数
+		data：获取其他类型的参数，需要额外数据源参数
+		I('get.id'); //$_GET['id']
+		I('get.id',0); //默认值是0
+		I('get.name','','htmlspecialchars'); // 利用htmlspecialchars进行过滤，默认值为空字符串
+		I('cookie.'); //获取整个cookie数组
+		I('server.REQUEST_METHOD'); 
+		I('param.id'); //thinkphp特有的自动获取类型, 为默认类型
+		I('id'); //等价与I('param.id')
+		I('path.1'); //如果url是 ./index.php/Home/Index/index，那么path.1对应了Index， path.0对应了Home
+	------如果没有提供过滤方法，默认存在过滤方法 htmlspecialchars。如果提供了过滤方法，那么这个默认的就失效了。默认的过滤方法可以在配置文件中修改
+		'DEFAULT_FILTER' => 'strip_tags,htmlspecialchars' //修改默认的过滤方法
+	------支持多个方法：
+		I('get.name','','strip_tags,htmlspecialchars');
+	------可以使用php内部提供的过滤器，filter_list如下，某些系统对某些方法支持的会不同,例如下面的在我的电脑上测试validate_email是生效的，但是email是不行的。也就是说要么使用FILTER_VALIDATE_EMAIL(也就是php内置的过滤器标号)或者 'validate_email'。
+		int boolean float validate_regexp validate_url validate_email validate_ip string stripped encoded special_chars unsafe_raw email url number_int number_float magic_quotes callback
+		I('post.email','',FILTER_VALIDATE_EMAIL)  //使用内部的filter标号指定过滤器
+		I('post.email, '', 'email'); //使用字符标识指定系统过滤器。跟上面的等效
+	------过滤器支持正则表达式
+		I('get.name','', '/^[a-zA-Z]+\d*$/')
+	-----取消默认过滤器，不进行任何过滤
+		I('get.name','','')  或者 I('get.name','',false)
+	-----I函数中的变量修饰符：
+		s: 强制转换为字符串
+		d：强制转化为整型
+		b：强制转换为boolean
+		a：强制转换为数组
+		f：强制转换为浮点
+		I('get.id/d') I('get.name/s') I('books/a')
+
+thinkphp路由：url模式必须是pathinfo（重写也算）或者是兼容模式才可以支持路由。普通模式不能支持路由
+	----配置：可以修改应用的或者一个模块的配置文件
+		'URL_ROUTER_ON' => true, //开启路由
+		'URL_ROUTE_RULES' =>	array(
+			'路由表达式' => '路由地址和额外参数', //配置一个匹配项
+			....
+		), ///配置动态路由，如果找到一个匹配的，系统就不会往下继续寻找了
+		'URL_MAP_RULES' => array('new/top'=>'news/index?type=top'); //静态路由配置。
+	----路由表达式： 字符串类型，可以是普通的规则表达式，或者是正则表达式
+		----规则表达式： 
+		如果参数要从get中动态获取使用 :名称
+			'user/:id' => 'user/show/:1', //:1表示引用前面的第一个动态参数id
+			'new/year/month/day' => 'News/read', //全静态地址表达式
+		支持数字类型约束：
+			'blog/:id\d' => 'Blog/read'
+		支持非数字变量的简单排除：
+			'news/:cate^add-edit-delete' => 'News/category', //因为news与实际的目录News相同，为了能够访问到实际news目录下的add edit delete需要将这三个排除。
+		完全匹配：在规则表达式最后面加上$，需要完全匹配，不能多出来其他部分
+			'new/:cate$' => 'News/category', //这个不能匹配到index.php/new/info/1，因为后面多了一个1
+		-----正则表达式： 路由表达式支持正则，必须是'/'开头(里面的反斜杠需要转义)，否则视为规则表达式，跟规则表达式类似，在映射的路由地址中可以使用 :1 对子表达式进行引用。
+			'/^new\/(\d{4})\/(\d{2})\/(\d{2})/' => 'News/achive?year=:1&month=:2&day=:3'
+		---note：如果在config里面设置了参数分隔符URL_PATHINFO_DEPR,这里书写规则的分隔符统一都是 ‘/’
+	-----路由地址与参数详细：
+		支持的形式如下：
+			[分组/模块/操作]？&key1=v1&key2=v2
+			array('[分组/模块/操作]','参数1=值1&参数2=值2')
+			array('[分组/模块/操作]',array('k=v','k=v'))
+			'http:其他网站地址'
+			array('外部地址','重定向代码')
+			function($name){echo 'hellow'.$name} //闭包函数支持
+		----note: 如果路由地址是 / 或者 http 开头会被认作是外部地址。值得注意的是，如果是内部地址传入参数只能用数组或者 & 前面的 / 部分只能是模块与操作。但是如果是外部地址可以直接用pathinfo之类的模型进行传参：
+			'avater/:id' => 'member/avata/id/:1_small' //使用了pathinfo模式传递参数
+			'blog/:id' => 'http://blog.thinkphp.cn/read/:1'
+		----路由地址可以给url添加一些额外的参数，由于这些参数不需要url请求自己提供，提高安全性。
+		----关于函数类型的路由地址：
+			'test' => function(){echo 'hellow test';}, //无参数
+			'new/:year\d/:month\d/:day\d$' => function($year,$month,$day){eco}, //路由规则是规则表达式，那么参数名称与规则表达式的动态名参数名称一致就行,可以调整顺序
+			'/^new\/(\d{4})\/(\d{2})\/(\d{2})/' => function($year,$month,$day){eco}, //路由规则是正则表达式，系统会依次将子表达式填充到参数列表
+	-----静态路由： 静态路由只能支持完全匹配，并且不能在路由表达式里面不能包含动态的参数。
+		'new/top' => 'news/index?type=top', //不能匹配到index.php/new/top/1
+	----note: 静态路由不受路由地址后面的文件后缀的影响,例如 index.php/new/top.html 一样可以匹配到上面的配置。
+-----note：关于路由的配置，因为只要匹配到了就会返回，所以越复杂的路由设置越要放到前面，否则可能永远执行不到。
+
+
+视图：包括模板文件跟模板引擎。
+	----默认的模板文件定义： 视图目录(默认是View)/[模板主题/]/控制器名称(不带Controller)/操作函数名.模板文件后缀。默认后缀是html,默认主题为空，表示不启用模板的主题功能。
+	----改变视图文件夹名称(View):
+		'DEFAULT_V_LAYER' => 'Template'  //对应视图目录变成了分组下面的Template目录。
+	-----修改默认后缀：
+		'TMPL_TEMPLATE_SUFFIX' => '.tpl' //注意要有个 '.'
+	-----默认是给每一个Controller在view下建立自己的目录，也可以通过修改TMPL_FILE_DEPR修改Controller跟视图文件的分隔符
+		'TMPL_FILE_DEPR' => '-' //这样对应的视图文件路径 Home/View/Form_update.html
+	-----模板默认放在Application目录下，可以通过TMPL_PATH进行修改
+		define('TMPL_PATH','./Template/'); //这样会设置成 ./Template/Home/User/add.html. 其中没有了View文件夹。注意指定的目录字符串跟指定APP_PATH一样结尾的 '/'不能缺少。
+	-----在某个模块的配置文件中修改自己的视图存放路径
+		'VIEW_PATH' => './Theme/' //结尾的 ‘/’不能少。 路径修改后成为 ./Theme/User/add.html。也就是用./Theme替换了原来View跟之前的目录字符串内容。
+	-----同时定义TMPL_PATH 与 VIEW_PATH 模块自己的设置优先级更高
+	---模板渲染函数；
+		display('[模板文件]'[,'字符编码'][,'输出类型'])
+			display模块文件可以形式 [模块@][控制器:][操作] 或者指定完整的路径信息（带上后缀）。不提供模板文件会自动对应寻找 View[/当前主题]/控制器名/操作.html
+		----note: 渲染提供的文件中的控制器跟操作，可以不跟任何的控制器和操作对应，而只是支出一种目录关系。
+			$this->theme('blue')->display('noController:noMethod'); //映射到的 noController目录跟noMethod不代表实际控制器与方法。可以供给其他函数的调用。
+		----指定文件全路径引入：
+			display('./Public/html/top.html','utf-8','text/html') //指定文档路径  编码 与浏览器输出形式。
+		fetch与show：将display的读入文件与输出文件这两步拆分出来
+			$content = $this->fetch('Home@user:add'); //获取到内容之后可以做一些自己的额外工作再输出
+			$this->show($content,'utf-8','text/html'); //输出
+		----show方法也可以支持模板解析，也是就是说show本身可以当做display函数使用，但是一般不这样用。
+		assign('name',$value): 给模板变量赋值.也可以支持数组形式的多个变量赋值
+			$this->assign(array('name'=>'thinkphp','title'=>'hellow world')) //注意这里如果是assign('data',array('name'=>'thinkphp','title'=>'hellow world'))模板里面需要用$data.name访问。
+	----模板中变量输入，可以用原生的php代码嵌入模板文件也可以使用tp提供的输出方式
+		<?php echo $name.' '.$title; ?> //原生php
+		{$name}&nbsp;{$tilte} //tp解析。会编译成原生的原生的php
+		{$arr.name} {$arr['name']} //输出数组，如果是多维数组，只能用后一种形式。
+		{$person:name} {$person->name} //输出对象
+	----修改模板开始与结束标记；
+		'TMPL_L_DELIM' => '<{',
+		'TMPL_R_DELIT' => '{>', ///其实就是thinkphp先进行一次字符串匹配，识别并解析自己的标记，并且按照约定的语法进行替换。
+	----note: {$name} 其中前面的 '{' 与'$'这两个符号中间不能有任何的空格，否则不能解析
+	----输出系统与环境变量；
+		-----输出 $_SERVER $_SESSION $_GET $_POST $_COOKIE $_ENV $_REQUEST
+		{$Think.server.script_name} //输出$_SERVER['SCRIPT_NAME']
+		{$Think.session.user_id}
+		$Think.get.id
+		$Think.post.id
+		$Think.cookie.name
+		$Think.env.php_version
+		$think.request.id
+		----输出常量：
+			{$Think.const.MODULE_NAME} //定义的当前模块名
+			{$Think.MODULE_NAME} //同上
+		----输出配置的参数：
+			{$Think.config.db_charset}
+			{$Think.config.url_model}
+		-----输出语言变量：
+			{$Think.lang.page_error}
+			{$Think.lang.var_error}
+	-----使用函数：
+		{$data.name|md5} //编译成 <?php echo (md5($data['name'])); ?>
+		{$time|date='y-m-d','###'} //‘###’起到标识变量作为参数的位置。编译为  <?php echo (date('y-m-d',$time)); ?>
+		{$data.name|substr=0,3} //编译为 <?php echo (substr($data['name'],0,3)); ?>， 也就是说如果传入的参数是第一个位置，就可以省略 '###'的标识
+		{$name|md5|strtoupper|substr=0,3} //连贯操作，从左到右执行。前面的结果作为后面的输入
+		{:substr(strtoupper(md5($name)))} //同上, 最前面那个:表示输出函数执行结果。模板中 最前面的符号 ":"表示进行后面表达式的计算，如果没有并且{}里面的起始字符不是$就会导致模板引擎不认识语法而将当做纯文本打印。
+	-----提供默认值：
+		{$Think.get.name|getName|default='名称为空'} //从左到右执行，先获取getName($_GET['name'])然后如果返回的是null或者没有返回就打印默认值，也就是 if(!isset(getName($_GET['name']))) echo '名称为空'。注意这里的getName是自定义的函数。
+	-----运算符： 使用运算符的时候，不能使用 $person.name 只能使用 $person['name'] 不能使用 $name|md5 只能使用 md5($name)
+		----一元与二元：+ - * / % ++ --
+		----三元： $status?'正常':'异常'
+		
+	----循环：
+		volist标签： <volist name='result' id='row'> name需要与绑定的变量名一致，id表示循环的变量名，可以任意取
+			---支持分页；
+				<volist name='list' id='vo' offset='5' lenght='10'> ///从第5条开始的10条记录
+			---输出偶数行：  mod=2 意思将记录的index模上2
+				<volist name='list' id='vo' mod='2'>
+					<eq name='mod' value='1'>{$vo.name}</eq> ///如果mod的结果是 1 就打印输出
+			---利用mod控制记录的换行
+				<volist name='list' id='vo' mod='5'>
+					{$vo.name}
+					<eq name='mod' value='4'><br></eq>
+			---empty属性： empty内容不支持解析html语法，如果要实现里面显示html内容，可以通过assign一个变量，然后在页面通过这个变量输出html
+				<volist name='list' id='vo' empty='$emptyHtml'> //其中emptyHtml通过 assign('emptyHtml','<span>内容为空</span>')设置
+			---使用函数设定name属性：
+				<volist name="func('arg')" >
+		foreach: 没有volist的复杂的属性 item表示循环变量
+			<foreach name='list' item='vo'>
+				{$key} | {$vo} 

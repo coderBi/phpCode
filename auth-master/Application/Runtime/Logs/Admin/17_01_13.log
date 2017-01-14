@@ -1,0 +1,17 @@
+[ 2017-01-13T12:04:36+08:00 ] 127.0.0.1 /auth-master/Admin/Public/islogin.html
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.002000s ]
+NOTIC: [2048] Declaration of Admin\Controller\PublicController::error() should be compatible with Think\Controller::error($message = '', $jumpUrl = '', $ajax = false) D:\phpCode\auth-master\Application\Admin\Controller\PublicController.class.php 第 328 行.
+NOTIC: [2048] Declaration of Admin\Controller\PublicController::success() should be compatible with Think\Controller::success($message = '', $jumpUrl = '', $ajax = false) D:\phpCode\auth-master\Application\Admin\Controller\PublicController.class.php 第 328 行.
+SQL: SHOW COLUMNS FROM `a_admin` [ RunTime:0.1020s ]
+NOTIC: [8] Undefined index: validate D:\phpCode\auth-master\ThinkPHP_3.2.3\Library\Think\Model.class.php 第 1185 行.
+NOTIC: [8] Undefined index: auto D:\phpCode\auth-master\ThinkPHP_3.2.3\Library\Think\Model.class.php 第 1128 行.
+SQL: SHOW COLUMNS FROM `a_admin` [ RunTime:0.0100s ]
+SQL: SELECT `chars` FROM a_admin a LEFT JOIN a_char c ON a.id=c.id  WHERE a.username = 'admin' AND a.status = 1 AND c.type = 0 LIMIT 1   [ RunTime:0.0170s ]
+SQL: SELECT `id`,`username`,`status`,`name` FROM `a_admin` WHERE `username` = 'admin' AND `password` = '188fec1bc25ef912b6e77f6741b5c364' AND `status` = 1 LIMIT 1   [ RunTime:0.0000s ]
+SQL: UPDATE `a_admin` SET `last_time`='1484280276',`last_ip`='127.0.0.1' WHERE `username` = 'admin' AND `password` = '188fec1bc25ef912b6e77f6741b5c364' AND `status` = 1 [ RunTime:0.0170s ]
+SQL: SHOW COLUMNS FROM `a_group_access` [ RunTime:0.0150s ]
+SQL: SHOW COLUMNS FROM `a_auth_cate` [ RunTime:0.0150s ]
+SQL: SELECT `module` FROM `a_auth_cate` WHERE `id` IN ('0','1','2','7','10','19','20','57','58','59','61','51','52','53','54','55','56','62','63','64','65','66','67','68','69','70','71','72') AND `level` = 0 AND `status` = 1 ORDER BY sort DESC LIMIT 1   [ RunTime:0.0000s ]
+

@@ -1,0 +1,12 @@
+[ 2017-01-09T09:31:33+08:00 ] 127.0.0.1 /sublime/brother-thinkphp/Projects/index.php/Index/index/name/bww
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.001000s ]
+ERR: 无法加载模块:Index
+
+[ 2017-01-09T09:32:05+08:00 ] 127.0.0.1 /sublime/brother-thinkphp/Projects/Index/index/name/bww
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000000s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000000s ]
+ERR: 无法加载模块:Index
+

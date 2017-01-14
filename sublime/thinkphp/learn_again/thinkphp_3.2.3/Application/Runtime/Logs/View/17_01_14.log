@@ -1,0 +1,33 @@
+[ 2017-01-14T05:06:48+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/show1
+ERR: 无法加载控制器:Show1
+
+[ 2017-01-14T05:07:25+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show1
+ERR: 模板不存在:./Application/View/Template/Index/show.tpl
+
+[ 2017-01-14T05:10:52+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show1
+ERR: 模板不存在:./Application/View/Template/Index/show.tpl
+
+[ 2017-01-14T05:12:53+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show1
+ERR: 模板不存在:./Application/View/Template/Index-show.tpl
+
+[ 2017-01-14T05:13:04+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show1
+ERR: 模板不存在:./Application/View/Template/Index_show.tpl
+
+[ 2017-01-14T05:18:33+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show2
+ERR: 模板不存在:./Application/Home/Template/Index_index.tpl
+
+[ 2017-01-14T05:25:40+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show2
+ERR: 模板不存在:./Application/Home/Template/Index_index.tpl
+
+[ 2017-01-14T05:30:29+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show3
+ERR: 模板不存在:./Application/View/Template/Index_.Application/Home/View/Index/.tpl
+
+[ 2017-01-14T05:38:57+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show3.t
+ERR: 非法操作:show3.t
+
+[ 2017-01-14T05:39:16+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/show3.php
+ERR: 非法操作:show3.php
+
+[ 2017-01-14T20:54:07+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/usefunc
+ERR: 非法操作:usefunc
+
