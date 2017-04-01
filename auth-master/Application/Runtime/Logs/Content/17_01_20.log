@@ -1,0 +1,54 @@
+[ 2017-01-20T02:13:35+08:00 ] 127.0.0.1 /auth-master/Content/Article/cateinfo.html?id=8&_=1484849615697
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+NOTIC: [2048] Declaration of Admin\Controller\PublicController::error() should be compatible with Think\Controller::error($message = '', $jumpUrl = '', $ajax = false) D:\phpCode\auth-master\Application\Admin\Controller\PublicController.class.php 第 328 行.
+NOTIC: [2048] Declaration of Admin\Controller\PublicController::success() should be compatible with Think\Controller::success($message = '', $jumpUrl = '', $ajax = false) D:\phpCode\auth-master\Application\Admin\Controller\PublicController.class.php 第 328 行.
+SQL: SHOW COLUMNS FROM `a_group_access` [ RunTime:0.0110s ]
+SQL: SHOW COLUMNS FROM `a_auth_cate` [ RunTime:0.0100s ]
+SQL: SELECT * FROM `a_auth_cate` WHERE `status` = 1 AND `level` = 1 AND `module` = 'Content' ORDER BY sort DESC  [ RunTime:0.0000s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `a_auth_cate` WHERE `pid` = 19 AND `status` = 1 AND `is_menu` <> 0 LIMIT 1   [ RunTime:0.0000s ]
+SQL: SELECT `module`,`controller`,`method`,`title`,`name` FROM `a_auth_cate` WHERE `status` = 1 AND `level` = 2 AND `is_menu` = 0 AND `module` = 'Content' AND `controller` = 'Article' ORDER BY sort DESC  [ RunTime:0.0000s ]
+SQL: SHOW COLUMNS FROM `a_article_cate` [ RunTime:0.0100s ]
+SQL: SELECT * FROM `a_article_cate` WHERE `id` = 8 LIMIT 1   [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: sortmax D:\phpCode\auth-master\Application\Runtime\Cache\Content\05897afbcf60b2c614e85eb7f64843ec.php 第 30 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.017000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.017000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.001000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.001000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001000s ]
+
+[ 2017-01-20T02:13:38+08:00 ] 127.0.0.1 /auth-master/Content/Article/cateinfo.html?id=2&_=1484849617959
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000000s ]
+NOTIC: [2048] Declaration of Admin\Controller\PublicController::error() should be compatible with Think\Controller::error($message = '', $jumpUrl = '', $ajax = false) D:\phpCode\auth-master\Application\Admin\Controller\PublicController.class.php 第 328 行.
+NOTIC: [2048] Declaration of Admin\Controller\PublicController::success() should be compatible with Think\Controller::success($message = '', $jumpUrl = '', $ajax = false) D:\phpCode\auth-master\Application\Admin\Controller\PublicController.class.php 第 328 行.
+SQL: SHOW COLUMNS FROM `a_group_access` [ RunTime:0.0100s ]
+SQL: SHOW COLUMNS FROM `a_auth_cate` [ RunTime:0.0100s ]
+SQL: SELECT * FROM `a_auth_cate` WHERE `status` = 1 AND `level` = 1 AND `module` = 'Content' ORDER BY sort DESC  [ RunTime:0.0000s ]
+SQL: SELECT COUNT(*) AS tp_count FROM `a_auth_cate` WHERE `pid` = 19 AND `status` = 1 AND `is_menu` <> 0 LIMIT 1   [ RunTime:0.0000s ]
+SQL: SELECT `module`,`controller`,`method`,`title`,`name` FROM `a_auth_cate` WHERE `status` = 1 AND `level` = 2 AND `is_menu` = 0 AND `module` = 'Content' AND `controller` = 'Article' ORDER BY sort DESC  [ RunTime:0.0000s ]
+SQL: SHOW COLUMNS FROM `a_article_cate` [ RunTime:0.0100s ]
+SQL: SELECT * FROM `a_article_cate` WHERE `id` = 2 LIMIT 1   [ RunTime:0.0000s ]
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000000s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000000s ]
+NOTIC: [8] Undefined variable: sortmax D:\phpCode\auth-master\Application\Runtime\Cache\Content\05897afbcf60b2c614e85eb7f64843ec.php 第 30 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.010000s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.010000s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000000s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000000s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000000s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000000s ]
+

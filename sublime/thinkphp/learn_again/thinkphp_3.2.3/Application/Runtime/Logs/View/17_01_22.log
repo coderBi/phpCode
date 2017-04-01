@@ -1,0 +1,6 @@
+[ 2017-01-22T07:07:57+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/volist
+ERR: _STORAGE_WRITE_ERROR_:./Application/Runtime/Cache/View/9f994be74a9d8af2d395db3a7147b49e.php
+
+[ 2017-01-22T16:53:52+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/View/Index/layout2
+ERR: 模板不存在:./Application/View/Template/Layout/newLayout.tpl
+

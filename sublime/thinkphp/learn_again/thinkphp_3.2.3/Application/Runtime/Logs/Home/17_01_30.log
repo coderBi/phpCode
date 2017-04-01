@@ -1,0 +1,12 @@
+[ 2017-01-30T16:44:21+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Home/Bind/index
+ERR: 非法操作:index
+
+[ 2017-01-30T16:46:25+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Home/Index/redirect
+ERR: 非法操作:redirect
+
+[ 2017-01-30T16:46:36+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Home/Index/
+ERR: 非法操作:index
+
+[ 2017-01-30T21:57:52+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Home/Index/callMenuWidget2
+ERR: 模板不存在:./Application/Home/View/Index/callMenuWidget2.html
+

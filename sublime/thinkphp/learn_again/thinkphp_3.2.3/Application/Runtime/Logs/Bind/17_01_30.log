@@ -1,0 +1,12 @@
+[ 2017-01-30T16:52:43+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php//Bind/Bind/index
+ERR: 非法操作:index
+
+[ 2017-01-30T16:53:17+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Bind/Bind/index
+ERR: 非法操作:index
+
+[ 2017-01-30T17:02:38+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Bind/Bin/inde
+ERR: 非法操作:inde
+
+[ 2017-01-30T17:11:04+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Bind/Bin/inde
+ERR: 非法操作:inde
+

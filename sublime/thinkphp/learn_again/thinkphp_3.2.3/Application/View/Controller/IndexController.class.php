@@ -36,4 +36,41 @@ class IndexController extends Controller {
 		$this->assign('result',$result);
 		$this->display();
 	}
+
+	public function volist(){
+		$data = array(
+			array(
+				'name' => 'name1',
+				'age' => 1,
+			),
+			array(
+				'name' => 'name2',
+				'age' => 2,
+			),
+		);
+		$empty = "<span style='color:pink'>不存在任何的数据</span>";
+		$this->assign('data', $data);
+		$this->assign('empty', $empty);
+		$this->display();
+	}
+
+	public function layout1(){
+		//使用layout标签布局
+		$this->display('layout1');
+	}
+
+	public function layout2(){
+		//controller中使用layout函数布局
+		layout('Layout/newLayout');
+		$this->display('layout2');
+	}
+
+	public function layout3(){ //嵌套layout
+		layout('Layout/embed');
+		$this->display('layout2');
+	}
+
+	public function layout4(){ //使用include进行嵌套
+		$this->display('layout3');
+	}
 }

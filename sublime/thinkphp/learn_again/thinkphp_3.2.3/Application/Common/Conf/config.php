@@ -4,7 +4,7 @@ return array(
 	
 	//默认分组, url如果没有提供分组，就访问默认分组
 	'DEFAULT_MODULE' => 'Home',
-	'MODULE_ALLOW_LIST' =>array('Home','View'),  //如果设置了上面的DEFAULT_MODULE，那么这一项是必不可少的，否则会解析错误。
+	'MODULE_ALLOW_LIST' =>array('Home','View','Bind'),  //如果设置了上面的DEFAULT_MODULE，那么这一项是必不可少的，否则会解析错误。
 
 	//配置数据库
 	'DB_TYPE'=>'mysql',

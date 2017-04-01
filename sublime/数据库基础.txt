@@ -82,7 +82,7 @@ mysql命名：
 			修改： alter table 表名 change [column] 新字段名 新字段类型【新字段属性列表】 或者 alter table 表名 modify [column] 新字段类型【新字段属性列表】
 			删除： alter table 表名 drop 【column】 字段名
 		b)对索引： 添加 删除
-			添加：alter tabel 表名 add 【unique,primary】 key（字段名1【，字段名2....】）
+			添加：alter table 表名 add 【unique,primary】 key（字段名1【，字段名2....】）
 			删除：drop index 'index_name' on 'table_name'(column list)或者 alter talbe 'tb_name' drop index|unique|primary key 'index_name'
 		c）对表选项：通常都是修改，即使不给任何值，也会有默认值进行覆盖。 alter table 表名 charset=....
 		d)修改表名： alter table 旧表名 rename 【to】 新表名

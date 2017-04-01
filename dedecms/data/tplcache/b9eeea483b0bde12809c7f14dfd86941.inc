@@ -1,0 +1,1 @@
+<li class="c[field:global.autoindex/]"><a href="[field:arcurl/]" target="_blank"><img  src="[field:litpic/]" alt="[field:title/] 3GP MP4高清下载" /></a><p>[field:language/]</p><b><a href="[field:arcurl/]" target="_blank">[field:title/]</a>[field:score function='getSmallStars(@me)'/]<em>[field:score]@me=round(@me,2);[/field:score]分</em></b></li>

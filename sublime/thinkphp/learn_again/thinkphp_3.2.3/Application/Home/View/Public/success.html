@@ -1,0 +1,16 @@
+<h2 style='color:red'>succes跳转中间页面</h2>
+{$message}<br>
+<p style='color:teal'>页面在<b id='wait' style='color:red'>{$waitSecond}</b>>秒之后，跳转到{$jumpUrl}</p>
+<p><a href='{$jumpUrl}'>点击立即跳转</a></p>
+<script>
+(function(){
+	var wait = document.getElementById('wait');
+	var interval = setInterval(function(){
+		var time = --wait.innerHTML;
+		if(time <= 0){
+			location.href = '{$jumpUrl}';
+			clearInterval(interval);
+		}
+	},1000);
+})();
+</script>

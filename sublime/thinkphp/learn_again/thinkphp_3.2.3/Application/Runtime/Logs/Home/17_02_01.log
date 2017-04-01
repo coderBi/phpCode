@@ -1,0 +1,4 @@
+[ 2017-02-01T00:10:39+08:00 ] 127.0.0.1 /sublime/thinkphp/learn_again/thinkphp_3.2.3/index.php/Home/Index/add2ValidateAndAutoTable
+ERR: 1146:Table 'thinkphp.think_validate_and_auto' doesn't exist
+ [ SQL语句 ] : SHOW COLUMNS FROM `think_validate_and_auto`
+
