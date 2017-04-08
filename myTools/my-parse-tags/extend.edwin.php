@@ -1,25 +1,16 @@
 <?php
-function litimgurls($imgid = 0)
-{
-    global $lit_imglist, $dsql;
-    //获取附加表
-    $row = $dsql->GetOne("SELECT c.addtable FROM #@__archives AS a LEFT JOIN #@__channeltype AS c 
-                                                            ON a.channel=c.id where a.id='$imgid'");
-    $addtable = trim($row['addtable']);
-
-    //获取图片附加表imgurls字段内容进行处理
-    $row = $dsql->GetOne("Select imgurls From `$addtable` where aid='$imgid'");
-
-    //调用inc_channel_unit.php中ChannelUnit类
-    $ChannelUnit = new ChannelUnit(2, $imgid);
-
-    //调用ChannelUnit类中GetlitImgLinks方法处理缩略图
-    $lit_imglist = $ChannelUnit->GetlitImgLinks($row['imgurls']);
-
-    //返回结果
-    return $lit_imglist;
-}
-
+/**
+ * <p>
+ * Title:extend.edwin.php
+ * </p>
+ * <p>
+ * Description:自定义的一些扩展函数
+ * </p>
+ *
+ * @author ed
+ * @since 2017-4-1
+ * @version 1.0
+ */
 
 /*********************************************************自定义的mysqli相关操作  START*******************************************************/
 /**
@@ -124,7 +115,7 @@ function mysqli_query_all($sql = '', $mysqli = false, $charset = 'utf8')
     }
     $result->close();
 
-    if ($autoClose)
+    if (!empty($autoClose))
         $mysqli->close();
     return $toReturn;
 }
@@ -371,6 +362,29 @@ function memcache_decr($key='',$decr=1,$memcache=false){
 }
 /*********************************************************memcache操作相关  END*******************************************************/
 
+/*********************************************************页面跳转相关  START*******************************************************/
+/**
+ * 立即重定向到某个页面  并且停止当前脚本的执行
+ * @param $url  要跳转的url
+ */
+function redirectToUrl($url){
+    header("location:$url");
+    exit;
+}
+
+/**
+ * 延时页面跳转
+ * @param $msg  等待页面跳转的时候提示的信息
+ * @param $url 要跳转的url
+ * @param $time  等待跳转的时间 单位是s
+ */
+function refreshToUrl($msg,$url,$time){
+    echo "<span style='color:red;'>{$msg}!</span>";
+    echo "<br><a href='$url'>返回</a>";
+    echo "<br>页面将于{$time}秒之后进行跳转。";
+    header("refresh:$time,url=$url");
+}
+/*********************************************************页面跳转相关  END*******************************************************/
 
 /*********************************************************其他自定义扩展函数  START*******************************************************/
 /**

@@ -1,0 +1,60 @@
+2017-04-07 00:45:59 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_1.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:00 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_2.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:00 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_3.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:00 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_4.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:01 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_5.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:01 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_6.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:01 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_7.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:02 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_8.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:02 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_9.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:02 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_10.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:03 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_11.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:03 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_12.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:03 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_13.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:03 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_14.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:04 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_15.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:04 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_16.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:05 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_17.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:05 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_18.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:05 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_19.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:06 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_20.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:06 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_21.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:06 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_22.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:07 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_23.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:07 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_24.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:07 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_25.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:08 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_26.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:08 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_27.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:08 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_28.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:08 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_29.html?spm=a2h1n.8251845.0.0
+2017-04-07 00:46:09 [info] write one
+@additional message: 采集的url：http://list.youku.com/category/show/c_96_s_1_d_1_p_30.html?spm=a2h1n.8251845.0.0

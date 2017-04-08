@@ -1,0 +1,11 @@
+问题描述：
+	php默认是只能表示到2038年的时间戳。假设数据库中用整型或者timestamp进行存储。使用php函数 $date = date('Y-m-d H:i:s', 时间戳最大能表示int的最大值，php中没无符号整型)， 如果时间戳指定的值超过了 2^31 -1 就会发生时间异常（溢出）不能表示。
+
+解决方法： 使用php里面的 DateTime类  这个表示的范围要大的多，一般是够用的
+	$date = new DateTime('@时间戳数字'); //注意如果里面提供的是时间戳数字前面有一个 '@'
+	$date->setTimezone(new DateTimeZone('PRC'));
+	echo $date->formate('Y-m-d H:i:s');  //格式化位时间类型字符串
+
+	//反向使用  提供一个大的年份  获取大的时间戳
+	$date = new DateTime('7899-1-1 00:00:00');
+	echo $date->formate('U');

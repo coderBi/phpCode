@@ -1,0 +1,54 @@
+1，分析优酷的"全部电影"的页面， http://list.youku.com/category/show/c_96.html?spm=a2hmv.20009921.nav-second.5~1~3!11~A
+    ①：点击后面几个页面可以发现每个页面的形式是
+         http://list.youku.com/category/show/c_96_s_1_d_1_p_3.html?spm=a2h1n.8251845.0.0
+       可以判断页面跳转参数是p_3.html  后面的spm在多次跳转之中没有发生变化。
+    ②：展示页面最多只有30页，优酷片源远不止这么些，可能前面的c_96_s_1_d_1_p_3 还可以调整其他参数，但是目前只能猜测优酷设定了只能查看前面30页的记录。
+    ③：反复调整c_96_s_1_d_1_p_3中的c_96可以发现c代表的是搜索的类型，96表示电影 85表示综艺  95表示音乐....
+        反复调整 s_1 可以发现s 表示的是排序的方式， s_1 表示按播放量  s_2表示按评论数 更多的s选项可以在页面的显示排序下拉框中看到
+        反复调整 d_1 可以发现d 表示的是检索的是当天的还是本周本月还是历史所有， s_1表示当前 s_2表示本周，这些选项可以在排序下拉框后面另一个下拉框看到
+    ④：更多的检索条件，通过查看展示内容列表上面的检索条件可以得到如下结论
+        后面参数 a_表示传入地区  a_大陆  a_香港  a_其他表示未分类
+        后面参数 g_ 表示传入题材类型  g_武侠 g_犯罪  g_警匪
+        后面参数 r_ 表示时间   r_2017  r_2010  后面有一个更早值得是1970年之前的，参数是 a_-1969。 通过在测试没有办法传入 a_-2010这样的参数，后台好像判断这样的参数是非法的，没有进行任何筛选，页面检索的时间一栏也没有匹配到任何内容。
+        后面参数 u_ 表示状态， u_1表示全集  u_3表示预告 u_4表示将上映
+        后面参数 pt_ 表示付费信息  pt_1免费 pt_2 付费 pt_3 点播 pt_4 包月
+        -------note:上面多个参数不分先后顺序，传入非法会做无筛选处理
+
+2，分析页面显示列表前后字符串：
+    ①：页面中展示列表前面匹配字符串：
+             <div class="box-series"><ul class="panel">
+    ②：后面字符串：
+            </ul></div><div class="yk-pager">
+
+3，单条li标签分析
+    ①，内容如下：
+    <li class="yk-col4 mr1">
+        <div class="yk-pack pack-film">
+            <div class="p-thumb">
+                <a href="//v.youku.com/v_show/id_XMjUyMjAwNjcyNA==.html" title="罗曼蒂克消亡史" target="_blank"></a>
+                <i class="bg"> </i>
+                <div class="p-thumb-tagrt">
+                    <span class="vip-free">会员免费</span>
+                </div>
+                <img class="quic" _src="http://r1.ykimg.com/05160000584A574567BC3C3A87070DA0" src="http://r1.ykimg.com/05160000584A574567BC3C3A87070DA0" alt="罗曼蒂克消亡史" />
+            </div>
+            <ul class="p-info pos-bottom">
+                <li class="status hover-hide">
+                    <span class="p-time ">
+                    <i class="ibg"></i>
+                    <span>正片</span>
+                    </span>
+                </li>
+            </ul>
+            <ul class="info-list">
+                <li class="title">
+                    <a href="//v.youku.com/v_show/id_XMjUyMjAwNjcyNA==.html" title="罗曼蒂克消亡史" target="_blank">罗曼蒂克消亡史</a>
+                </li>
+                <li class="actor">
+                    <em>主演：</em>
+                    <a href="//list.youku.com/star/show/uid_UNTM5MTY=.html" target="_blank" title="葛优">葛优</a>、<a href="//list.youku.com/star/show/uid_UNTA4NTY=.html" target="_blank" title="章子怡">章子怡</a>
+                </li>
+                <li>10.9万次播放 </li>
+            </ul>
+        </div>
+    </li>

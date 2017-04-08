@@ -1,25 +1,18 @@
 <?php
-function litimgurls($imgid = 0)
-{
-    global $lit_imglist, $dsql;
-    //获取附加表
-    $row = $dsql->GetOne("SELECT c.addtable FROM #@__archives AS a LEFT JOIN #@__channeltype AS c 
-                                                            ON a.channel=c.id where a.id='$imgid'");
-    $addtable = trim($row['addtable']);
+/**
+ * <p>
+ * Title:extend.edwin.php
+ * </p>
+ * <p>
+ * Description:自定义的一些扩展函数
+ * </p>
+ *
+ * @author ed
+ * @since 2017-4-6
+ * @version 2.0
+ */
 
-    //获取图片附加表imgurls字段内容进行处理
-    $row = $dsql->GetOne("Select imgurls From `$addtable` where aid='$imgid'");
-
-    //调用inc_channel_unit.php中ChannelUnit类
-    $ChannelUnit = new ChannelUnit(2, $imgid);
-
-    //调用ChannelUnit类中GetlitImgLinks方法处理缩略图
-    $lit_imglist = $ChannelUnit->GetlitImgLinks($row['imgurls']);
-
-    //返回结果
-    return $lit_imglist;
-}
-
+namespace Edwin;
 
 /*********************************************************自定义的mysqli相关操作  START*******************************************************/
 /**
@@ -31,18 +24,23 @@ function litimgurls($imgid = 0)
  * @param string $charset 连接编码默认utf8
  * @return bool|mysqli  连接配置成功返回mysqli对象  失败返回false
  */
-function mysqli_edwin_init($host = 'localhost', $user = 'root', $password = '123', $dbname = '', $charset = 'utf8')
+function mysqli_init($host = 'localhost', $user = 'root', $password = '123', $charset = 'utf8', $dbname = '')
 {
-    //默认配置
-    $dbname = !empty($dbname) ? $dbname : 'dedecmsv57utf8sp2';
     //创建mysqli对象
-    $mysqli = new mysqli($host, $user, $password, $dbname);
+    $mysqli = new mysqli($host, $user, $password);
     if ($mysqli->connect_error)
         return false;
     //设置连接字符集
     if (!$mysqli->query("set names $charset")) {
         $mysqli->close();
         return false;
+    }
+    //设置连接数据库
+    if(!empty($dbname)){
+        if(!$mysqli->query("use $dbname")){
+            $mysqli->close();
+            return false;
+        }
     }
     return $mysqli;
 }
@@ -124,7 +122,7 @@ function mysqli_query_all($sql = '', $mysqli = false, $charset = 'utf8')
     }
     $result->close();
 
-    if ($autoClose)
+    if (!empty($autoClose))
         $mysqli->close();
     return $toReturn;
 }
@@ -259,7 +257,8 @@ function rmParamFromQueryString($name = '', $queryString = '')
  * @return SphinxClient  初始化配置之后的sphinx连接对象
  */
 function init_sphinx($host = 'localhost', $port = 9312, $match_mode =SPH_MATCH_ALL){
-    $sphinx_api_path = "D:\WebSever\coreseek-4.1-win32\coreseek-4.1-win32\api";
+    global $config_ed;
+    $sphinx_api_path = $config_ed['sphinx']['sphinx_api_path'];
     //包含php操作的api文件  实际使用发现 dede的include下面默认就包含了一个api文件，所以这里的require在当前环境下也可以不配置
     require_once("$sphinx_api_path\sphinxapi.php");
 
@@ -294,9 +293,6 @@ function sphinx_query_ids($keywords='',$indexer='',$sphinxClient=false){
 /*********************************************************sphinx操作相关  END*******************************************************/
 
 /*********************************************************memcache操作相关  START*******************************************************/
-//设置memcache是否启用  为true表示启用memcache
-$GLOBALS['memcache_on'] = true;
-
 /**
  * 初始化memcache连接
  * @param string $host  主机 默认localhost
@@ -370,6 +366,151 @@ function memcache_decr($key='',$decr=1,$memcache=false){
     return true;
 }
 /*********************************************************memcache操作相关  END*******************************************************/
+
+/*********************************************************页面跳转相关  START*******************************************************/
+/**
+ * 立即重定向到某个页面  并且停止当前脚本的执行
+ * @param $url  要跳转的url
+ */
+function redirectToUrl($url){
+    header("location:$url");
+    exit;
+}
+
+/**
+ * 延时页面跳转
+ * @param $msg  等待页面跳转的时候提示的信息
+ * @param $url 要跳转的url
+ * @param $time  等待跳转的时间 单位是s
+ */
+function refreshToUrl($msg,$url,$time){
+    echo "<span style='color:red;'>{$msg}!</span>";
+    echo "<br><a href='$url'>返回</a>";
+    echo "<br>页面将于{$time}秒之后进行跳转。";
+    header("refresh:$time,url=$url");
+}
+/*********************************************************页面跳转相关  END*******************************************************/
+
+/*********************************************************网页抓取相关  使用 curl START*******************************************************/
+/**
+ * 通过curl获取一个url
+ * @param string $url  待请求的url
+ * @param bool|false $resouce curl资源，默认为false，表示没有提供，如果外部没有提供，本函数内部会自动创建，待函数执行完成会自动销毁内部创建的资源
+ * @param array $opts 设置的curl属性，默认CURLOPT_RETURNTRANSFER=>1
+ * @return bool|mixed 失败返回false  成功返回true或者请求获取到的字符串
+ */
+function curl_getURLContent($url='',$resouce=false,$opts=array(CURLOPT_RETURNTRANSFER=>1)){
+    if(empty($url))
+        return false;
+    //如果没有提供curl资源句柄 就内部创建  但是如果是本函数内部创建的 在函数执行完成之后会自动销毁
+    if(empty($resouce)){
+        $resouce = curl_init();
+        $autoClose = true;
+    }
+    //设置属性
+    foreach ($opts as $k=>$v) {
+        curl_setopt($resouce,$k,$v);
+    }
+    curl_setopt($resouce,CURLOPT_URL,$url);
+
+    //这个函数如果执行失败返回false 如果成功并设置了CURLOPT_RETURNTRANSFER=>1返回结果字符串，如果没有设置CURLOPT_RETURNTRANSFER返回true
+    $result = curl_exec($resouce);
+    if(!empty($autoClose))
+        curl_close($resouce);
+    return $result;
+}
+/*********************************************************网页抓取相关  使用 curl END*******************************************************/
+
+/*******************字符串处理 + 正则使用相关  存放经常可能用到的正则和一些其他常见的字符串处理 START*******************************************************/
+/**
+ * 在一个字符串中查找第一次出现在两个指定字符串子串当中的子串
+ * @param string $start 前面字符串子串
+ * @param string $end  后面字符串子串
+ * @param string $str  待查找的字符串
+ * @return bool|string  执行异常返回false 执行成功返回查到的匹配字符串
+ */
+function getContentBetween($start='',$end='',$str=''){
+    //起始位置
+    $sp = strpos($str,$start);
+    if(false === $sp)
+        return false;
+    //终止位置 从起始字符串后面开始找
+    $ep = strpos($str,$end,$sp+strlen($start));
+    if(false === $ep)
+        return false;
+    $result = substr($str,$sp+strlen($start),$ep - $sp - strlen($start));
+    return $result;
+}
+/*******************字符串处理 + 正则使用相关  存放经常可能用到的正则和一些其他常见的字符串处理 END*******************************************************/
+
+/***************************************************************mongodb相关 START*********************************************************************/
+/**
+ * 初始化mongodb连接
+ * @param string $host 连接服务器
+ * @param int $port  连接端口
+ * @param string $collection 默认使用的数据库
+ * @param string $username 登录用户名  如果为空表示不登录
+ * @param string $password 登录密码
+ * @return mixed 新的数据库对象
+ */
+function mongodb_init($host='localhost',$port=27017,$collection='test',$username='',$password=''){
+    $str = "mongodb://";
+    if(!empty($username))
+        $str .= "$username:$password@";
+    $str .= "$host:$port";
+    $client = new  MongoClient($str);
+
+    //选择数据库
+    $db = $client->selectDB($collection);
+
+    return $db;
+}
+
+/***************************************************************mongodb相关 END*********************************************************************/
+
+
+/***************************************************************打印日志相关 START*******************************************************/
+function log($level='info',$msg='',$addition='',$path=''){
+    //配置日志路径
+    if(empty($path)){
+        global $config_ed;
+        if(!empty($config_ed['log']['path']))
+            $path = $config_ed['log']['path'];
+        else
+            return false;
+    }
+    $strToLog = "";
+    //获取写入时间
+    $date = new \DateTime();
+    $date_f = $date->format('Y-m-d H:i:s');
+    $strToLog .= $date_f;
+    $strToLog .= " [$level] $msg";
+    if(!empty( $addition))
+        $strToLog .= "\n@additional message: $addition";
+    $strToLog .= "\n";
+    //以独占的方式写入日志
+    $file = fopen($path,'ab');
+    if(!$file)
+        return false;
+    //flock的第二个参数 LOCK_SH共享锁，其他人可以读不可改  LOCK_EX排它锁，其他人不可读不可写  LOCK_UN释放锁
+    global $config_ed;
+    $timeout = !empty($config_ed['log']['timeout']) ?  $config_ed['log']['timeout'] : 5000000;
+    while($timeout > 0 && !flock($file,LOCK_EX)){
+        //等0.5s
+        usleep(500000);
+        $timeout -= 500000;
+    }
+    if($timeout <= 0)
+        return false;
+    //写入
+    fwrite($file,$strToLog);
+    //释放对文件的占用
+    flock($file,LOCK_UN);
+    //关闭文件
+    fclose($file);
+    return true;
+}
+/***************************************************************打印日志相关 END*******************************************************/
 
 
 /*********************************************************其他自定义扩展函数  START*******************************************************/
